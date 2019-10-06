@@ -180,7 +180,7 @@ public class FFMPEG {
 			Logger.getInstance().log(Logger.WARNING, "Couldn't find the concat video! (" + concatFile.getAbsolutePath() + ")");
 		}
 
-		File renderFile = new File(finalVideo);
+		File renderFile = new File(saveFolder + "/" + finalVideo);
 		if (renderFile.exists()) {
 			boolean deleted = renderFile.delete();
 			if (deleted) {
