@@ -34,7 +34,6 @@ public class Main {
 		programArgs.put("-folder", ArgsParser.Type.LIST);
 		programArgs.put("-help", ArgsParser.Type.NONE);
 		programArgs.put("-debug", ArgsParser.Type.NONE);
-		programArgs.put("-test", ArgsParser.Type.NONE);
 
 		ArgsParser.getInstance().setArguments(programArgs);
 		ArgsParser.getInstance().parse(args);
