@@ -1,0 +1,151 @@
+package dev.juho.ffmpegrender.client;
+
+import dev.juho.ffmpegrender.events.Event;
+import dev.juho.ffmpegrender.events.EventType;
+import dev.juho.ffmpegrender.events.Listener;
+import dev.juho.ffmpegrender.server.ClientPool;
+import dev.juho.ffmpegrender.server.Server;
+import dev.juho.ffmpegrender.server.client.Client;
+import dev.juho.ffmpegrender.server.message.Message;
+import dev.juho.ffmpegrender.server.message.MessageType;
+import dev.juho.ffmpegrender.utils.ArgsParser;
+import dev.juho.ffmpegrender.utils.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.*;
+
+public class RenderQueue implements Listener {
+
+	private Queue<File> renderQueue;
+	private List<String> filesToIgnore;
+	private List<String> folderPaths;
+	private Files files;
+	private String renderOptions;
+
+	private boolean queueBuilt;
+
+	private ClientPool clientPool;
+	private int videosToConcatToOne;
+	private List<UUID> newVideosBlocked;
+
+	public RenderQueue(Files files, ClientPool clientPool) {
+		this.renderQueue = new LinkedList<>();
+		this.filesToIgnore = new ArrayList<>();
+		this.folderPaths = new ArrayList<>();
+		this.files = files;
+		this.renderOptions = "-f mp4 -vcodec libx264 -profile:v main -r 60 -s 1920x1080";
+		this.queueBuilt = false;
+
+		this.clientPool = clientPool;
+		this.videosToConcatToOne = ArgsParser.getInstance().has("-videos_in_one") ? ArgsParser.getInstance().getInt("-videos_in_one") : 4;
+
+		this.newVideosBlocked = new ArrayList<>();
+
+		readFoldersFromArgs();
+	}
+
+	public void updateQueue(Client client) {
+		if (!queueBuilt) {
+			build();
+			queueBuilt = true;
+		}
+
+		if (renderQueue.isEmpty()) {
+			Logger.getInstance().log(Logger.INFO, "RENDER QUEUE IS EMPTY");
+			return;
+		}
+
+		JSONArray fileArray = new JSONArray();
+		client.getWriter().write(Message.build(MessageType.SET_RENDER_OPTIONS, Server.serverUUID, new JSONObject().put("RENDERING_OPTIONS", renderOptions)));
+
+		while (fileArray.length() < videosToConcatToOne && !renderQueue.isEmpty()) {
+			File file = renderQueue.poll();
+			fileArray.put(file.getName());
+			client.getWriter().write(file);
+		}
+
+		Logger.getInstance().log(Logger.DEBUG, "sending file info");
+		client.getWriter().write(Message.build(MessageType.FILE_INFO, Server.serverUUID, new JSONObject().put("files", fileArray)));
+	}
+
+	public Queue<File> getRenderQueue() {
+		return renderQueue;
+	}
+
+	@Override
+	public void handle(Event<EventType, ?> e) {
+		if (e.getType() == EventType.MESSAGE) {
+			Message msg = (Message) e.getData();
+
+			switch (msg.getType()) {
+				case VIDEO_RENDERED:
+					updateClient(msg);
+					e.cancel();
+					break;
+
+				case BLOCK_NEW_VIDEOS:
+					newVideosBlocked.add(msg.getSender());
+					break;
+			}
+		}
+	}
+
+	@Override
+	public List<EventType> supports() {
+		return Collections.singletonList(EventType.MESSAGE);
+	}
+
+	private void build() {
+		for (String path : folderPaths) {
+			File f = new File(path);
+
+			if (!f.exists()) {
+				Logger.getInstance().log(Logger.ERROR, "Couldn't find folder " + path);
+				continue;
+			}
+
+			if (!f.isDirectory()) {
+				Logger.getInstance().log(Logger.ERROR, path + " isn't a directory!");
+				continue;
+			}
+
+			for (File file : f.listFiles()) {
+				if (!filesToIgnore.contains(file.getAbsolutePath()) && file.getName().toLowerCase().endsWith(".mp4")) {
+					renderQueue.add(file);
+				}
+			}
+		}
+	}
+
+	private void updateClient(Message msg) {
+		files.saveRendered(msg.getData());
+
+		if (!newVideosBlocked.contains(msg.getSender())) {
+			if (renderQueue.size() != 0) {
+				Client client = clientPool.get(msg.getSender());
+				updateQueue(client);
+			}
+		}
+	}
+
+	private void readFoldersFromArgs() {
+		if (!ArgsParser.getInstance().has("-folder")) {
+			Logger.getInstance().log(Logger.WARNING, "Tried reading folders from args but 0 folders were found!");
+			return;
+		}
+
+		List<String> foldersToRender = ArgsParser.getInstance().getList("-folder");
+
+		for (String folder : foldersToRender) {
+			addFolder(folder);
+		}
+	}
+
+	private void addFolder(String path) {
+		Logger.getInstance().log(Logger.DEBUG, path + " added to render queue");
+		folderPaths.add(path);
+	}
+
+}

@@ -1,0 +1,200 @@
+package dev.juho.ffmpegrender.client;
+
+import dev.juho.ffmpegrender.events.Event;
+import dev.juho.ffmpegrender.events.EventBus;
+import dev.juho.ffmpegrender.events.EventType;
+import dev.juho.ffmpegrender.events.Listener;
+import dev.juho.ffmpegrender.events.events.ClientDisconnectEvent;
+import dev.juho.ffmpegrender.server.client.Client;
+import dev.juho.ffmpegrender.server.client.Writer;
+import dev.juho.ffmpegrender.server.client.reader.Reader;
+import dev.juho.ffmpegrender.server.message.Message;
+import dev.juho.ffmpegrender.server.message.MessageType;
+import dev.juho.ffmpegrender.utils.ArgsParser;
+import dev.juho.ffmpegrender.utils.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+public class FFMPEGClient implements Client, Listener {
+
+	private String host;
+	private int port;
+	private boolean running;
+	private UUID uuid;
+	private long startDate;
+
+	private Socket socket;
+
+	private Reader reader;
+	private Writer writer;
+
+	private FFMPEG ffmpeg;
+
+	private boolean shutdownAfterRender;
+
+	public FFMPEGClient(String host, int port) {
+		this.host = host;
+		this.port = port;
+		this.ffmpeg = new FFMPEG();
+		this.shutdownAfterRender = false;
+	}
+
+	@Override
+	public boolean isAlive() {
+		return running;
+	}
+
+	@Override
+	public Writer getWriter() {
+		return writer;
+	}
+
+	@Override
+	public Socket getSocket() {
+		return socket;
+	}
+
+	@Override
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	@Override
+	public long getUptime() {
+		return new Date().getTime() - startDate;
+	}
+
+	@Override
+	public void listen() throws IOException {
+		this.socket = new Socket(host, port);
+		this.running = true;
+		this.startDate = new Date().getTime();
+		this.writer = new Writer(socket.getOutputStream());
+
+		this.reader = new Reader(this, socket.getInputStream());
+		this.reader.start();
+	}
+
+	@Override
+	public void kill() throws IOException {
+		Logger.getInstance().log(Logger.WARNING, "Closing FFMPEGClient");
+		Logger.getInstance().log(Logger.DEBUG, "Trying to close all client connections");
+		EventBus.getInstance().publish(new ClientDisconnectEvent(this));
+		reader.close();
+		writer.close();
+		socket.close();
+		Logger.getInstance().log(Logger.DEBUG, "All client connections closed");
+	}
+
+	@Override
+	public void handle(Event<EventType, ?> e) {
+		switch (e.getType()) {
+			case MESSAGE:
+				Message message = (Message) e.getData();
+				Logger.getInstance().log(Logger.DEBUG, "Received message: " + message.getData().toString());
+				readMessage(message);
+				break;
+		}
+	}
+
+	@Override
+	public List<EventType> supports() {
+		return Arrays.asList(EventType.MESSAGE);
+	}
+
+	public void shutdownAfterRender() {
+		shutdownAfterRender = true;
+	}
+
+	private void readMessage(Message message) {
+		switch (message.getType()) {
+			case SET_UUID:
+				this.uuid = UUID.fromString(message.getData().getString("uuid"));
+				break;
+
+			case FILE_INFO:
+				concatVideos(message.getData());
+				break;
+
+			case SET_RENDER_OPTIONS:
+				ffmpeg.setRenderOptions(message.getData().getString("RENDERING_OPTIONS"));
+				break;
+		}
+	}
+
+	private void concatVideos(JSONObject filesObject) {
+		File[] files = findFiles(filesObject.getJSONArray("files"));
+
+		for (File f : files) {
+			ffmpeg.addVideo(f);
+		}
+
+		String videoName = "";
+		try {
+			videoName = ffmpeg.concat();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		String finalVideo = "";
+
+		try {
+			finalVideo = ffmpeg.render(videoName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (finalVideo != null) {
+			File finalVideoFile = new File(finalVideo);
+			writer.write(finalVideoFile);
+
+			JSONObject obj = new JSONObject();
+			obj.put("files", filesObject.getJSONArray("files"));
+			obj.put("final_video", finalVideoFile.getName());
+
+			ffmpeg.deleteCurrentVideos(videoName, finalVideoFile.getName());
+			writer.write(Message.build(MessageType.VIDEO_RENDERED, uuid, obj));
+
+			if (shutdownAfterRender) {
+				writer.write(Message.build(MessageType.GOODBYE, uuid, new JSONObject()));
+
+				try {
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				System.exit(0);
+			}
+		}
+	}
+
+	private File[] findFiles(JSONArray fileArray) {
+		File[] files = new File[fileArray.length()];
+
+		for (int i = 0; i < fileArray.length(); i++) {
+			String saveFolder = "files";
+			if (ArgsParser.getInstance().has("-save_folder"))
+				saveFolder = ArgsParser.getInstance().getString("-save_folder");
+
+			File file = new File(saveFolder + "/" + fileArray.get(i));
+			if (!file.exists()) {
+				Logger.getInstance().log(Logger.ERROR, "Couldn't find file " + file.getAbsolutePath());
+				continue;
+			}
+
+			files[i] = file;
+		}
+
+		return files;
+	}
+
+}
