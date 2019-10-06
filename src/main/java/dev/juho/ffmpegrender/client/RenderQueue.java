@@ -86,7 +86,9 @@ public class RenderQueue implements Listener {
 					break;
 
 				case BLOCK_NEW_VIDEOS:
+					Logger.getInstance().log(Logger.DEBUG, "Client " + msg.getSender() + " will not be sent more videos!");
 					newVideosBlocked.add(msg.getSender());
+					e.cancel();
 					break;
 			}
 		}

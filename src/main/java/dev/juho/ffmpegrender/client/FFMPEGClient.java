@@ -111,6 +111,7 @@ public class FFMPEGClient implements Client, Listener {
 	}
 
 	public void shutdownAfterRender() {
+		writer.write(Message.build(MessageType.BLOCK_NEW_VIDEOS, uuid, new JSONObject()));
 		shutdownAfterRender = true;
 	}
 
