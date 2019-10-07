@@ -14,7 +14,7 @@ import dev.juho.ffmpegrender.utils.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 public class RenderQueue implements Listener {
@@ -109,6 +109,12 @@ public class RenderQueue implements Listener {
 	}
 
 	private void build() {
+		try {
+			readVideoInfo();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		for (String path : folderPaths) {
 			File f = new File(path);
 
@@ -123,11 +129,47 @@ public class RenderQueue implements Listener {
 			}
 
 			for (File file : f.listFiles()) {
-				if (!filesToIgnore.contains(file.getAbsolutePath()) && file.getName().toLowerCase().endsWith(".mp4")) {
+				if (!filesToIgnore.contains(file.getName()) && file.getName().toLowerCase().endsWith(".mp4")) {
 					renderQueue.add(file);
 				}
 			}
 		}
+	}
+
+	private void readVideoInfo() throws IOException {
+		String saveFolder = "files";
+		if (ArgsParser.getInstance().has("-save_folder"))
+			saveFolder = ArgsParser.getInstance().getString("-save_folder");
+
+		File infoFile = new File(saveFolder + "/videoInfo.json");
+
+		if (!infoFile.exists()) {
+			Logger.getInstance().log(Logger.DEBUG, "Couldn't find videoInfo.json");
+			return;
+		}
+
+		StringBuilder builder = new StringBuilder();
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(infoFile)));
+
+		String line;
+		while ((line = reader.readLine()) != null) {
+			builder.append(line);
+		}
+
+		JSONArray array = new JSONArray(builder.toString());
+
+		for (int i = 0; i < array.length(); i++) {
+			JSONObject video = array.getJSONObject(i);
+			JSONArray filesArray = video.getJSONArray("files");
+
+			for (int j = 0; j < filesArray.length(); j++) {
+				String videoName = filesArray.getString(j);
+				filesToIgnore.add(videoName);
+			}
+		}
+
+		files.setFileArray(array);
 	}
 
 	private void updateClient(Client client) {

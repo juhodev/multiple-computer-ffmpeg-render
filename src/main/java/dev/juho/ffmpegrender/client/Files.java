@@ -24,6 +24,10 @@ public class Files {
 		this.saveFileForFiles = new File(saveFolder + "/videoInfo.json");
 	}
 
+	public void setFileArray(JSONArray fileArray) {
+		this.fileArray = fileArray;
+	}
+
 	public void saveRendered(JSONObject videoInfo) {
 		Logger.getInstance().log(Logger.DEBUG, "Received render info");
 		fileArray.put(videoInfo);
