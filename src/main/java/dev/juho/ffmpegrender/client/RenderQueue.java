@@ -115,6 +115,8 @@ public class RenderQueue implements Listener {
 			e.printStackTrace();
 		}
 
+		ignoreFolders();
+
 		for (String path : folderPaths) {
 			File f = new File(path);
 
@@ -128,10 +130,20 @@ public class RenderQueue implements Listener {
 				continue;
 			}
 
-			for (File file : f.listFiles()) {
-				if (!filesToIgnore.contains(file.getName()) && file.getName().toLowerCase().endsWith(".mp4")) {
-					renderQueue.add(file);
+			addVideoFilesToQueue(f, ArgsParser.getInstance().has("-recursive"));
+		}
+	}
+
+	private void addVideoFilesToQueue(File folder, boolean recursive) {
+		for (File f : folder.listFiles()) {
+			if (f.isDirectory()) {
+				if (!filesToIgnore.contains(f.getName()) && recursive) {
+					addVideoFilesToQueue(f, true);
 				}
+			}
+
+			if (!filesToIgnore.contains(f.getName()) && f.getName().toLowerCase().endsWith(".mp4")) {
+				renderQueue.add(f);
 			}
 		}
 	}
@@ -170,6 +182,15 @@ public class RenderQueue implements Listener {
 		}
 
 		files.setFileArray(array);
+	}
+
+	private void ignoreFolders() {
+		List<String> foldersToIgnore = ArgsParser.getInstance().getList("-ignore_files_under");
+
+		for (String folder : foldersToIgnore) {
+			filesToIgnore.add(folder);
+			Logger.getInstance().log(Logger.DEBUG, "Ignoring files under " + folder);
+		}
 	}
 
 	private void updateClient(Client client) {

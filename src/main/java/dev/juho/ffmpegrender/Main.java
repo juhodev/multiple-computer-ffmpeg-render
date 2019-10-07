@@ -32,6 +32,8 @@ public class Main {
 		programArgs.put("-videos_in_one", ArgsParser.Type.STRING);
 		programArgs.put("-save_folder", ArgsParser.Type.STRING);
 		programArgs.put("-folder", ArgsParser.Type.LIST);
+		programArgs.put("-ignore_files_under", ArgsParser.Type.LIST);
+		programArgs.put("-recursive", ArgsParser.Type.NONE);
 		programArgs.put("-help", ArgsParser.Type.NONE);
 		programArgs.put("-debug", ArgsParser.Type.NONE);
 
