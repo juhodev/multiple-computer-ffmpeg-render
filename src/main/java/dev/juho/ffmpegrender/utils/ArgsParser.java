@@ -111,7 +111,6 @@ public class ArgsParser {
 	}
 
 	private void addList(String argument, String s) {
-		Logger.getInstance().log(Logger.INFO, "adding " + argument + " - " + s);
 		if (parsedArgs.containsKey(argument)) {
 			List<String> strs = (List<String>) parsedArgs.get(argument);
 			strs.add(s);
