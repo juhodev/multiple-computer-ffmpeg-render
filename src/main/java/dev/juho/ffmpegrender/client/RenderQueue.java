@@ -3,6 +3,7 @@ package dev.juho.ffmpegrender.client;
 import dev.juho.ffmpegrender.events.Event;
 import dev.juho.ffmpegrender.events.EventType;
 import dev.juho.ffmpegrender.events.Listener;
+import dev.juho.ffmpegrender.events.events.ConnectEvent;
 import dev.juho.ffmpegrender.server.ClientPool;
 import dev.juho.ffmpegrender.server.Server;
 import dev.juho.ffmpegrender.server.client.Client;
@@ -76,27 +77,35 @@ public class RenderQueue implements Listener {
 
 	@Override
 	public void handle(Event<EventType, ?> e) {
-		if (e.getType() == EventType.MESSAGE) {
-			Message msg = (Message) e.getData();
+		switch (e.getType()) {
+			case MESSAGE:
+				Message msg = (Message) e.getData();
 
-			switch (msg.getType()) {
-				case VIDEO_RENDERED:
-					updateClient(msg);
-					e.cancel();
-					break;
+				switch (msg.getType()) {
+					case VIDEO_RENDERED:
+						files.saveRendered(msg.getData());
+						updateClient(clientPool.get(msg.getSender()));
+						e.cancel();
+						break;
 
-				case BLOCK_NEW_VIDEOS:
-					Logger.getInstance().log(Logger.DEBUG, "Client " + msg.getSender() + " will not be sent more videos!");
-					newVideosBlocked.add(msg.getSender());
-					e.cancel();
-					break;
-			}
+					case BLOCK_NEW_VIDEOS:
+						Logger.getInstance().log(Logger.DEBUG, "Client " + msg.getSender() + " will not be sent more videos!");
+						newVideosBlocked.add(msg.getSender());
+						e.cancel();
+						break;
+				}
+				break;
+
+			case CONNECTION:
+				ConnectEvent connectEvent = (ConnectEvent) e;
+				updateClient(connectEvent.getData());
+				break;
 		}
 	}
 
 	@Override
 	public List<EventType> supports() {
-		return Collections.singletonList(EventType.MESSAGE);
+		return Arrays.asList(EventType.MESSAGE, EventType.CONNECTION);
 	}
 
 	private void build() {
@@ -121,12 +130,9 @@ public class RenderQueue implements Listener {
 		}
 	}
 
-	private void updateClient(Message msg) {
-		files.saveRendered(msg.getData());
-
-		if (!newVideosBlocked.contains(msg.getSender())) {
+	private void updateClient(Client client) {
+		if (!newVideosBlocked.contains(client.getUuid())) {
 			if (renderQueue.size() != 0) {
-				Client client = clientPool.get(msg.getSender());
 				updateQueue(client);
 			}
 		}
