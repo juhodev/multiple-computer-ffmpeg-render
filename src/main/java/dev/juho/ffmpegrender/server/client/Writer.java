@@ -16,6 +16,7 @@ public class Writer {
 	}
 
 	public void write(Message message) {
+		Logger.getInstance().log(Logger.DEBUG, "Writing a message " + message.getData().toString());
 		try {
 			os.write(message.toByteArray());
 		} catch (IOException e) {
