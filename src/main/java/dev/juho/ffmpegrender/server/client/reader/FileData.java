@@ -32,7 +32,7 @@ public class FileData implements ReaderData {
 	private boolean isFull;
 
 	private BufferedOutputStream fileOS;
-	private int fileWritten;
+	private long fileWritten;
 
 
 	public FileData(String rootFolder) {
