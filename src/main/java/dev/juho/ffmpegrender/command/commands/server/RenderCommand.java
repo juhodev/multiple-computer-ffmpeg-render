@@ -27,8 +27,10 @@ public class RenderCommand extends Command {
 			return;
 		}
 
+		renderQueue.start();
+
 		for (Client client : clientPool.getClients().values()) {
-			renderQueue.updateQueue(client);
+			renderQueue.updateClient(client);
 		}
 	}
 }
