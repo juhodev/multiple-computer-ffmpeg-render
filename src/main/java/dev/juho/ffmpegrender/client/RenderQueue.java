@@ -218,18 +218,12 @@ public class RenderQueue implements Listener {
 	}
 
 	private void ignoreFolders() {
-		List<String> foldersToIgnore = ArgsParser.getInstance().getList("-ignore_files_under");
+		if (ArgsParser.getInstance().has("-ignore_files_under")) {
+			List<String> foldersToIgnore = ArgsParser.getInstance().getList("-ignore_files_under");
 
-		for (String folder : foldersToIgnore) {
-			filesToIgnore.add(folder);
-			Logger.getInstance().log(Logger.DEBUG, "Ignoring files under " + folder);
-		}
-	}
-
-	private void updateClient(Client client) {
-		if (!newVideosBlocked.contains(client.getUuid())) {
-			if (renderQueue.size() != 0) {
-				updateQueue(client);
+			for (String folder : foldersToIgnore) {
+				filesToIgnore.add(folder);
+				Logger.getInstance().log(Logger.DEBUG, "Ignoring files under " + folder);
 			}
 		}
 	}
