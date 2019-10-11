@@ -52,14 +52,11 @@ public class FFMPEG {
 
 		String videoName = createVideoName();
 
-		String builderCommand = "ffmpeg -f concat -safe 0 -i tempConcatFile.txt -c copy \"" + saveFolder + "/" + videoName + "\"";
-		ProcessBuilder builder;
+		String[] command = buildCommand(10, "ffmpeg -f concat -safe 0 -i tempConcatFile.txt -c copy " + saveFolder + "/" + videoName + "");
+		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg concat command: ");
+		Logger.getInstance().log(Logger.DEBUG, command);
 
-		if (OSInfo.getOSType() == OSInfo.OSType.WINDOWS) {
-			builder = new ProcessBuilder("cmd.exe", "/C", builderCommand);
-		} else {
-			builder = new ProcessBuilder("ffmpeg", "-f", "concat", "-safe", "0", "-i", "tempConcatFile.txt", "-c", "copy", saveFolder + "/" + videoName);
-		}
+		ProcessBuilder builder = new ProcessBuilder(command);
 
 		builder.redirectErrorStream(true);
 		Process process = builder.start();
@@ -105,30 +102,14 @@ public class FFMPEG {
 
 		String finalName = saveFolder + "/RENDER_" + video;
 
-		String ffmpegCommand = "ffmpeg -i \"" + saveFolder + "/" + video + "\" " + renderOptions + " \"" + finalName + "\"";
-		Logger.getInstance().log(Logger.DEBUG, "FFMPEG command: " + ffmpegCommand);
-
-		ProcessBuilder builder;
-
 		String[] renderOptionsSplit = renderOptions.split(" ");
-		String[] cmd = new String[4 + renderOptionsSplit.length];
 
-		int i = 0;
-		cmd[i++] = "ffmpeg";
-		cmd[i++] = "-i";
-		cmd[i++] = saveFolder + "/" + video;
+		String[] command = buildCommand(4 + renderOptionsSplit.length, "ffmpeg -i " + saveFolder + "/" + video, renderOptions, finalName);
 
-		for (String s : renderOptionsSplit) {
-			cmd[i++] = s;
-		}
+		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg render command: ");
+		Logger.getInstance().log(Logger.DEBUG, command);
 
-		cmd[i] = finalName;
-
-		if (OSInfo.getOSType() == OSInfo.OSType.WINDOWS) {
-			builder = new ProcessBuilder("cmd.exe", "/C", ffmpegCommand);
-		} else {
-			builder = new ProcessBuilder(cmd);
-		}
+		ProcessBuilder builder = new ProcessBuilder(command);
 
 		builder.redirectErrorStream(true);
 		Process process = builder.start();
@@ -201,6 +182,21 @@ public class FFMPEG {
 		name += currentVideos.get(currentVideos.size() - 1).getName();
 		name += "_" + Utils.randomString() + ".mp4";
 		return name;
+	}
+
+	private String[] buildCommand(int size, String... commands) {
+		String[] cmd = new String[size];
+		int position = 0;
+
+		for (String command : commands) {
+			String[] words = command.split(" ");
+
+			for (String word : words) {
+				cmd[position++] = word;
+			}
+		}
+
+		return cmd;
 	}
 
 }

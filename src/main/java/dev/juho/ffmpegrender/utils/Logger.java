@@ -53,6 +53,16 @@ public class Logger {
 		log(level, builder.toString());
 	}
 
+	public void log(int level, String[] array) {
+		StringBuilder builder = new StringBuilder();
+
+		for (String s : array) {
+			builder.append(s).append(" ");
+		}
+
+		log(level, builder.toString());
+	}
+
 	public void log(int level, int x) {
 		log(level, String.valueOf(x));
 	}
