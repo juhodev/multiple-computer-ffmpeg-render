@@ -2,7 +2,6 @@ package dev.juho.ffmpegrender.client;
 
 import dev.juho.ffmpegrender.utils.ArgsParser;
 import dev.juho.ffmpegrender.utils.Logger;
-import dev.juho.ffmpegrender.utils.OSInfo;
 import dev.juho.ffmpegrender.utils.Utils;
 
 import java.io.*;
