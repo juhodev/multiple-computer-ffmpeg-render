@@ -110,6 +110,23 @@ public class RenderQueue implements Listener {
 		return Arrays.asList(EventType.MESSAGE, EventType.CONNECTION);
 	}
 
+	public void addFolderToQueue(String path) {
+		File f = new File(path);
+		Logger.getInstance().log(Logger.INFO, "Adding " + path + " to render queue");
+
+		if (!f.exists()) {
+			Logger.getInstance().log(Logger.ERROR, "Couldn't find folder " + f.getAbsolutePath());
+			return;
+		}
+
+		if (!f.isDirectory()) {
+			Logger.getInstance().log(Logger.ERROR, path + " isn't a directory!");
+			return;
+		}
+
+		addVideoFilesToQueue(f, ArgsParser.getInstance().has("-recursive"));
+	}
+
 	public void updateClient(Client client) {
 		if (!newVideosBlocked.contains(client.getUuid())) {
 			clientQueue.add(client);

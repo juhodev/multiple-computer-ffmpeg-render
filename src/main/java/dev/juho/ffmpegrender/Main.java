@@ -3,10 +3,7 @@ package dev.juho.ffmpegrender;
 import dev.juho.ffmpegrender.client.FFMPEGClient;
 import dev.juho.ffmpegrender.command.CmdExecutor;
 import dev.juho.ffmpegrender.command.commands.client.ClientStopCommand;
-import dev.juho.ffmpegrender.command.commands.server.QueueCommand;
-import dev.juho.ffmpegrender.command.commands.server.RenderCommand;
-import dev.juho.ffmpegrender.command.commands.server.ServerCommand;
-import dev.juho.ffmpegrender.command.commands.server.StopCommand;
+import dev.juho.ffmpegrender.command.commands.server.*;
 import dev.juho.ffmpegrender.events.EventBus;
 import dev.juho.ffmpegrender.client.Files;
 import dev.juho.ffmpegrender.client.RenderQueue;
@@ -64,6 +61,7 @@ public class Main {
 			cmdExecutor.register(new StopCommand(server));
 			cmdExecutor.register(new RenderCommand(server.getClientPool(), renderQueue));
 			cmdExecutor.register(new QueueCommand(renderQueue));
+			cmdExecutor.register(new AddFolderCommand(renderQueue));
 		} else if (ArgsParser.getInstance().has("-client")) {
 			if (!ArgsParser.getInstance().has("-host") && !ArgsParser.getInstance().has("-port")) {
 				Logger.getInstance().log(Logger.ERROR, "-host or -port missing!");

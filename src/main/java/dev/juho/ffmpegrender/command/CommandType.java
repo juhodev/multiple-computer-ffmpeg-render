@@ -7,6 +7,7 @@ public enum CommandType {
 	STOP,
 	RENDER,
 	QUEUE,
+	ADD_FOLDER,
 
 	//	CLIENT
 	CLIENT_STOP,
