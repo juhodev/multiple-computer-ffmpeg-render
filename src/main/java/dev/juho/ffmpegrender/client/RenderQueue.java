@@ -47,7 +47,7 @@ public class RenderQueue implements Listener {
 		this.queueBuilt = false;
 
 		this.clientPool = clientPool;
-		this.videosToConcatToOne = ArgsParser.getInstance().has("-videos_in_one") ? ArgsParser.getInstance().getInt("-videos_in_one") : VIDEOS_TO_CONCAT_TO_ONE_BY_DEFAULT;
+		this.videosToConcatToOne = ArgsParser.getInstance().has(ArgsParser.Argument.VIDEOS_IN_ONE) ? ArgsParser.getInstance().getInt(ArgsParser.Argument.VIDEOS_IN_ONE) : VIDEOS_TO_CONCAT_TO_ONE_BY_DEFAULT;
 		this.newVideosBlocked = new ArrayList<>();
 
 		this.clientQueue = new LinkedList<>();
@@ -126,7 +126,7 @@ public class RenderQueue implements Listener {
 			return;
 		}
 
-		addVideoFilesToQueue(f, ArgsParser.getInstance().has("-recursive"));
+		addVideoFilesToQueue(f, ArgsParser.getInstance().has(ArgsParser.Argument.RECURSIVE));
 	}
 
 	public void updateClient(Client client) {
@@ -182,7 +182,7 @@ public class RenderQueue implements Listener {
 				continue;
 			}
 
-			addVideoFilesToQueue(f, ArgsParser.getInstance().has("-recursive"));
+			addVideoFilesToQueue(f, ArgsParser.getInstance().has(ArgsParser.Argument.RECURSIVE));
 		}
 	}
 
@@ -202,8 +202,8 @@ public class RenderQueue implements Listener {
 
 	private void readVideoInfo() throws IOException {
 		String saveFolder = "files";
-		if (ArgsParser.getInstance().has("-save_folder"))
-			saveFolder = ArgsParser.getInstance().getString("-save_folder");
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+			saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
 
 		File infoFile = new File(saveFolder + "/videoInfo.json");
 
@@ -237,8 +237,8 @@ public class RenderQueue implements Listener {
 	}
 
 	private void ignoreFolders() {
-		if (ArgsParser.getInstance().has("-ignore_files_under")) {
-			List<String> foldersToIgnore = ArgsParser.getInstance().getList("-ignore_files_under");
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.IGNORE)) {
+			List<String> foldersToIgnore = ArgsParser.getInstance().getList(ArgsParser.Argument.IGNORE);
 
 			for (String folder : foldersToIgnore) {
 				filesToIgnore.add(folder);
@@ -248,12 +248,12 @@ public class RenderQueue implements Listener {
 	}
 
 	private void readFoldersFromArgs() {
-		if (!ArgsParser.getInstance().has("-folder")) {
+		if (!ArgsParser.getInstance().has(ArgsParser.Argument.RENDER_FOLDER)) {
 			Logger.getInstance().log(Logger.WARNING, "Tried reading folders from args but 0 folders were found!");
 			return;
 		}
 
-		List<String> foldersToRender = ArgsParser.getInstance().getList("-folder");
+		List<String> foldersToRender = ArgsParser.getInstance().getList(ArgsParser.Argument.RENDER_FOLDER);
 
 		for (String folder : foldersToRender) {
 			addFolder(folder);

@@ -6,17 +6,16 @@ import java.util.List;
 
 public class ArgsParser {
 
-	private HashMap<String, Type> arguments;
+	private HashMap<String, Argument> aliases;
+	private HashMap<Argument, Type> arguments;
 
 	private static ArgsParser instance;
-	private HashMap<String, Object> parsedArgs;
+	private HashMap<Argument, Object> parsedArgs;
 
 	private ArgsParser() {
 		this.parsedArgs = new HashMap<>();
-	}
-
-	public void setArguments(HashMap<String, Type> arguments) {
-		this.arguments = arguments;
+		this.aliases = new HashMap<>();
+		this.arguments = new HashMap<>();
 	}
 
 	public static ArgsParser getInstance() {
@@ -27,34 +26,33 @@ public class ArgsParser {
 		return instance;
 	}
 
-	public boolean has(String key) {
+	public boolean has(Argument key) {
 		return parsedArgs.containsKey(key);
 	}
 
-	public String getString(String key) {
+	public String getString(Argument key) {
 		return (String) parsedArgs.get(key);
 	}
 
-	public int getInt(String key) {
+	public int getInt(Argument key) {
 		return Integer.parseInt((String) parsedArgs.get(key));
 	}
 
-	public List<String> getList(String key) {
+	public List<String> getList(Argument key) {
 		return (List<String>) parsedArgs.get(key);
+	}
+
+	public void add(Argument name, Type type, String... aliases) {
+		arguments.put(name, type);
+
+		for (String alias : aliases) {
+			Logger.getInstance().log(Logger.DEBUG, "Setting argument alias " + alias + " -> " + name);
+			this.aliases.put(alias, name);
+		}
 	}
 
 	public void parse(String[] args) {
 		createHashMapFromArgs(args);
-
-		if (parsedArgs.containsKey("-help")) {
-			StringBuilder builder = new StringBuilder();
-			for (String s : arguments.keySet()) {
-				builder.append(s).append(" ");
-			}
-
-			Logger.getInstance().log(Logger.INFO, "Args: " + builder.toString());
-			System.exit(0);
-		}
 	}
 
 	private void createHashMapFromArgs(String[] args) {
@@ -66,22 +64,24 @@ public class ArgsParser {
 				if (key.isEmpty()) {
 					key = s;
 				} else {
-					if (!arguments.containsKey(key)) {
+					if (!aliases.containsKey(key)) {
 						Logger.getInstance().log(Logger.ERROR, key + " not found");
 						continue;
 					}
 
-					switch (arguments.get(key)) {
+					Argument arg = aliases.get(key);
+
+					switch (arguments.get(arg)) {
 						case LIST:
-							addList(key, builder.toString().trim());
+							addList(arg, builder.toString().trim());
 							break;
 
 						case STRING:
-							parsedArgs.put(key, builder.toString().trim());
+							parsedArgs.put(arg, builder.toString().trim());
 							break;
 
 						case NONE:
-							parsedArgs.put(key, "");
+							parsedArgs.put(arg, "");
 							break;
 					}
 
@@ -94,23 +94,30 @@ public class ArgsParser {
 		}
 
 		if (!key.isEmpty()) {
-			switch (arguments.get(key)) {
+			if (!aliases.containsKey(key)) {
+				Logger.getInstance().log(Logger.ERROR, key + " not found");
+				return;
+			}
+
+			Argument arg = aliases.get(key);
+
+			switch (arguments.get(arg)) {
 				case LIST:
-					addList(key, builder.toString().trim());
+					addList(arg, builder.toString().trim());
 					break;
 
 				case STRING:
-					parsedArgs.put(key, builder.toString().trim());
+					parsedArgs.put(arg, builder.toString().trim());
 					break;
 
 				case NONE:
-					parsedArgs.put(key, "");
+					parsedArgs.put(arg, "");
 					break;
 			}
 		}
 	}
 
-	private void addList(String argument, String s) {
+	private void addList(Argument argument, String s) {
 		if (parsedArgs.containsKey(argument)) {
 			List<String> strs = (List<String>) parsedArgs.get(argument);
 			strs.add(s);
@@ -124,6 +131,19 @@ public class ArgsParser {
 
 	public enum Type {
 		STRING, LIST, NONE,
+	}
+
+	public enum Argument {
+		CLIENT,
+		SERVER,
+		ADDRESS,
+		PORT,
+		VIDEOS_IN_ONE,
+		SAVE_FOLDER,
+		RENDER_FOLDER,
+		IGNORE,
+		RECURSIVE,
+		DEBUG,
 	}
 
 }

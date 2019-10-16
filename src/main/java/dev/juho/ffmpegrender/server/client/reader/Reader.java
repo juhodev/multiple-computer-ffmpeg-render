@@ -41,8 +41,8 @@ public class Reader extends Thread {
 								readerData = new MessageData();
 							} else if (identifier == MessageIdentifier.FILE_INFO) {
 								String saveFolder = "files";
-								if (ArgsParser.getInstance().has("-save_folder"))
-									saveFolder = ArgsParser.getInstance().getString("-save_folder");
+								if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+									saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
 
 								readerData = new FileData(saveFolder);
 							}

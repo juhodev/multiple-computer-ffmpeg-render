@@ -188,8 +188,8 @@ public class FFMPEGClient implements Client, Listener {
 
 		for (int i = 0; i < fileArray.length(); i++) {
 			String saveFolder = "files";
-			if (ArgsParser.getInstance().has("-save_folder"))
-				saveFolder = ArgsParser.getInstance().getString("-save_folder");
+			if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+				saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
 
 			File file = new File(saveFolder + "/" + fileArray.get(i));
 			if (!file.exists()) {

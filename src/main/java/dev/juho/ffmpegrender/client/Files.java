@@ -18,8 +18,8 @@ public class Files {
 		this.fileArray = new JSONArray();
 
 		String saveFolder = "files";
-		if (ArgsParser.getInstance().has("-save_folder"))
-			saveFolder = ArgsParser.getInstance().getString("-save_folder");
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+			saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
 
 		this.saveFileForFiles = new File(saveFolder + "/videoInfo.json");
 	}

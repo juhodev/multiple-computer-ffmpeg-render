@@ -41,8 +41,8 @@ public class FFMPEG {
 		Logger.getInstance().log(Logger.DEBUG, "Starting to concat video");
 
 		String saveFolder = "files";
-		if (ArgsParser.getInstance().has("-save_folder"))
-			saveFolder = ArgsParser.getInstance().getString("-save_folder");
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+			saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
 
 		File file = new File("tempConcatFile.txt");
 		PrintWriter writer = new PrintWriter(new FileWriter(file));
@@ -96,8 +96,8 @@ public class FFMPEG {
 		}
 
 		String saveFolder = "files";
-		if (ArgsParser.getInstance().has("-save_folder"))
-			saveFolder = ArgsParser.getInstance().getString("-save_folder");
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+			saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
 
 		if (renderOptions.isEmpty()) {
 			Logger.getInstance().log(Logger.ERROR, "Render options not set for some reason");
@@ -150,8 +150,8 @@ public class FFMPEG {
 		}
 
 		String saveFolder = "files";
-		if (ArgsParser.getInstance().has("-save_folder"))
-			saveFolder = ArgsParser.getInstance().getString("-save_folder");
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+			saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
 
 		File concatFile = new File(saveFolder + "/" + concatVideo);
 		if (concatFile.exists()) {
