@@ -24,14 +24,13 @@ public class Main {
 		HashMap<String, ArgsParser.Type> programArgs = new HashMap<>();
 		programArgs.put("-client", ArgsParser.Type.STRING);
 		programArgs.put("-server", ArgsParser.Type.STRING);
-		programArgs.put("-host", ArgsParser.Type.STRING);
+		programArgs.put("-address", ArgsParser.Type.STRING);
 		programArgs.put("-port", ArgsParser.Type.STRING);
 		programArgs.put("-videos_in_one", ArgsParser.Type.STRING);
-		programArgs.put("-save_folder", ArgsParser.Type.STRING);
-		programArgs.put("-folder", ArgsParser.Type.LIST);
-		programArgs.put("-ignore_files_under", ArgsParser.Type.LIST);
+		programArgs.put("-s_folder", ArgsParser.Type.STRING);
+		programArgs.put("-r_folder", ArgsParser.Type.LIST);
+		programArgs.put("-ignore", ArgsParser.Type.LIST);
 		programArgs.put("-recursive", ArgsParser.Type.NONE);
-		programArgs.put("-help", ArgsParser.Type.NONE);
 		programArgs.put("-debug", ArgsParser.Type.NONE);
 
 		ArgsParser.getInstance().setArguments(programArgs);
