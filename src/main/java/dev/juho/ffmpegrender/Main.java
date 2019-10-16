@@ -88,9 +88,9 @@ public class Main {
 		String[] folders;
 
 		if (customSaveFolder) {
-			folders = new String[]{"files"};
-		} else {
 			folders = new String[]{ArgsParser.getInstance().getString("-s_folder")};
+		} else {
+			folders = new String[]{"files"};
 		}
 
 		for (String folder : folders) {
