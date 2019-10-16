@@ -36,6 +36,8 @@ public class RenderQueue implements Listener {
 
 	private boolean started;
 
+	private static final int VIDEOS_TO_CONCAT_TO_ONE_BY_DEFAULT = 1;
+
 	public RenderQueue(Files files, ClientPool clientPool) {
 		this.renderQueue = new LinkedList<>();
 		this.filesToIgnore = new ArrayList<>();
@@ -45,7 +47,7 @@ public class RenderQueue implements Listener {
 		this.queueBuilt = false;
 
 		this.clientPool = clientPool;
-		this.videosToConcatToOne = ArgsParser.getInstance().has("-videos_in_one") ? ArgsParser.getInstance().getInt("-videos_in_one") : 4;
+		this.videosToConcatToOne = ArgsParser.getInstance().has("-videos_in_one") ? ArgsParser.getInstance().getInt("-videos_in_one") : VIDEOS_TO_CONCAT_TO_ONE_BY_DEFAULT;
 		this.newVideosBlocked = new ArrayList<>();
 
 		this.clientQueue = new LinkedList<>();
