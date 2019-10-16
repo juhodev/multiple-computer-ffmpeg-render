@@ -41,7 +41,7 @@ public class Main {
 			Logger.getInstance().log(Logger.DEBUG, "DEBUG MODE ENABLED");
 		}
 
-		setupFolders();
+		setupFolders(ArgsParser.getInstance().has("-s_folder"));
 
 		if (ArgsParser.getInstance().has("-server") || (!ArgsParser.getInstance().has("-server") && !ArgsParser.getInstance().has("-client"))) {
 			int serverPort = ArgsParser.getInstance().has("-port") ? ArgsParser.getInstance().getInt("-port") : 7592;
@@ -84,8 +84,14 @@ public class Main {
 		}
 	}
 
-	private static void setupFolders() {
-		String[] folders = new String[]{"files"};
+	private static void setupFolders(boolean customSaveFolder) {
+		String[] folders;
+
+		if (customSaveFolder) {
+			folders = new String[]{"files"};
+		} else {
+			folders = new String[]{ArgsParser.getInstance().getString("-s_folder")};
+		}
 
 		for (String folder : folders) {
 			File f = new File(folder);
