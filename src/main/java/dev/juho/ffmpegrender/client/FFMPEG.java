@@ -33,6 +33,11 @@ public class FFMPEG {
 	 * @throws IOException IOException
 	 */
 	public String concat() throws IOException {
+		if (currentVideos.size() == 1) {
+			Logger.getInstance().log(Logger.ERROR, "There is only one video in currentVideos");
+			return null;
+		}
+
 		Logger.getInstance().log(Logger.DEBUG, "Starting to concat video");
 
 		String saveFolder = "files";
@@ -173,6 +178,10 @@ public class FFMPEG {
 		}
 
 		currentVideos.clear();
+	}
+
+	public int getVideoCount() {
+		return currentVideos.size();
 	}
 
 	private String createVideoName() {

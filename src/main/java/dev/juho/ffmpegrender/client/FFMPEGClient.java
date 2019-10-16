@@ -139,10 +139,15 @@ public class FFMPEGClient implements Client, Listener {
 		}
 
 		String videoName = "";
-		try {
-			videoName = ffmpeg.concat();
-		} catch (IOException e) {
-			e.printStackTrace();
+
+		if (ffmpeg.getVideoCount() == 1) {
+			try {
+				videoName = ffmpeg.concat();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			videoName = files[0].getName();
 		}
 
 		String finalVideo = "";
