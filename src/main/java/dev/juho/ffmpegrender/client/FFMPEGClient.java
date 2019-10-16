@@ -140,7 +140,7 @@ public class FFMPEGClient implements Client, Listener {
 
 		String videoName = "";
 
-		if (ffmpeg.getVideoCount() == 1) {
+		if (ffmpeg.getVideoCount() > 1) {
 			try {
 				videoName = ffmpeg.concat();
 			} catch (IOException e) {
