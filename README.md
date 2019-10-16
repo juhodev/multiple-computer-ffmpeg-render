@@ -17,7 +17,7 @@ You have to have [FFMPEG](https://www.ffmpeg.org) installed on your system.
 ```
 -server             runs the program as a server
 -port               port on which the server should be ran on
--videos_in_one      how many videos will be concatenated to one (four by default)
+-videos_in_one      how many videos will be concatenated to one (disabled by default)
 -s_folder           folder where files will be saved (./files by default)
 -r_folder           folder where not yet rendered files are located
 -recursive          include files that are in subfolders of the folder specified with -r_folder
