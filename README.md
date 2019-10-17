@@ -10,9 +10,9 @@ I built this mostly because I wanted to try to build my own java server so this 
 
 You have to have [FFMPEG](https://www.ffmpeg.org) installed on your system.
 
-## Commands
+## Args
 
-### Server commands
+### Server args
 
 ```
 -server             runs the program as a server
@@ -25,7 +25,7 @@ You have to have [FFMPEG](https://www.ffmpeg.org) installed on your system.
 -debug              debug logs
 ```
 
-### Client commands
+### Client args
 
 ```
 -client        runs the program as a client
@@ -33,6 +33,26 @@ You have to have [FFMPEG](https://www.ffmpeg.org) installed on your system.
 -port          port of the server
 -s_folder      folder where files will be saved (./files by default)
 -debug         debug logs
+```
+
+## Commands
+
+These commands can be ran when the program is open.
+
+### Server commands
+
+```
+server         tells you info about connected clients
+stop           shutsdown the server and clients
+render         starts sending videos to clients
+queue          print the not yet rendered video queue
+add_folder     lets you to add a folder after starting so you don't need to restart the program and reconnect all the clients
+```
+
+### Client commands
+
+```
+stop     stops the client _after_ the current render is done
 ```
 
 ## Examples
