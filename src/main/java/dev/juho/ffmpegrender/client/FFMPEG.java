@@ -195,10 +195,26 @@ public class FFMPEG {
 	private String[] buildCommand(String... commands) {
 		List<String> cmd = new ArrayList<>();
 
+		boolean insideQuotes = false;
+		StringBuilder builder = new StringBuilder();
 		for (String command : commands) {
-			String[] words = command.split(" ");
+			for (int i = 0; i < command.length(); i++) {
+				char c = command.charAt(i);
 
-			cmd.addAll(Arrays.asList(words));
+				if (c == ' ' && !insideQuotes) {
+					cmd.add(builder.toString());
+					builder.setLength(0);
+				} else if (c == '\"') {
+					insideQuotes = !insideQuotes;
+					builder.append(c);
+				} else {
+					builder.append(command.charAt(i));
+				}
+			}
+		}
+
+		if (builder.length() > 0) {
+			cmd.add(builder.toString());
 		}
 
 		String[] cmdArray = new String[cmd.size()];
