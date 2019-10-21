@@ -119,6 +119,9 @@ public class FFMPEGClient implements Client, Listener {
 		switch (message.getType()) {
 			case SET_UUID:
 				this.uuid = UUID.fromString(message.getData().getString("uuid"));
+				if (ArgsParser.getInstance().has(ArgsParser.Argument.LOCAL)) {
+					writer.write(Message.build(MessageType.SET_LOCAL_CLIENT, uuid, new JSONObject()));
+				}
 				break;
 
 			case FILE_INFO:
@@ -159,6 +162,8 @@ public class FFMPEGClient implements Client, Listener {
 		}
 
 		if (finalVideo != null) {
+			if (finalVideo.startsWith("\"")) finalVideo = finalVideo.substring(1);
+			if (finalVideo.endsWith("\"")) finalVideo = finalVideo.substring(0, finalVideo.length() - 1);
 			File finalVideoFile = new File(finalVideo);
 			writer.write(finalVideoFile);
 
@@ -185,19 +190,32 @@ public class FFMPEGClient implements Client, Listener {
 
 	private File[] findFiles(JSONArray fileArray) {
 		File[] files = new File[fileArray.length()];
+		boolean localClient = ArgsParser.getInstance().has(ArgsParser.Argument.LOCAL);
 
 		for (int i = 0; i < fileArray.length(); i++) {
-			String saveFolder = "files";
-			if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
-				saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
+			if (localClient) {
+				File file = new File(fileArray.getString(i));
+				if (!file.exists()) {
+					Logger.getInstance().log(Logger.ERROR, "Couldn't find file " + file.getAbsolutePath());
+					continue;
+				}
 
-			File file = new File(saveFolder + "/" + fileArray.get(i));
-			if (!file.exists()) {
-				Logger.getInstance().log(Logger.ERROR, "Couldn't find file " + file.getAbsolutePath());
-				continue;
+				Logger.getInstance().log(Logger.DEBUG, "Found the file! " + file.getAbsolutePath());
+				files[i] = file;
+			} else {
+				String saveFolder = "files";
+				if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+					saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
+
+				File file = new File(saveFolder + "/" + fileArray.getString(i));
+				if (!file.exists()) {
+					Logger.getInstance().log(Logger.ERROR, "Couldn't find file " + file.getAbsolutePath());
+					continue;
+				}
+
+				Logger.getInstance().log(Logger.DEBUG, "Found the file! " + file.getAbsolutePath());
+				files[i] = file;
 			}
-
-			files[i] = file;
 		}
 
 		return files;

@@ -8,5 +8,6 @@ public enum MessageType {
 	SET_RENDER_OPTIONS,
 	VIDEO_RENDERED,
 	BLOCK_NEW_VIDEOS,
+	SET_LOCAL_CLIENT,
 
 }

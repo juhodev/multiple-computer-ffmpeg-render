@@ -29,6 +29,7 @@ public class Main {
 		ArgsParser.getInstance().add(ArgsParser.Argument.SAVE_FOLDER, ArgsParser.Type.STRING, "-s_folder", "-save_folder");
 		ArgsParser.getInstance().add(ArgsParser.Argument.RENDER_FOLDER, ArgsParser.Type.LIST, "-r_folder", "-render_folder");
 		ArgsParser.getInstance().add(ArgsParser.Argument.IGNORE, ArgsParser.Type.LIST, "-ignore", "-ignore_files_under", "-ignore_subfolder");
+		ArgsParser.getInstance().add(ArgsParser.Argument.LOCAL, ArgsParser.Type.NONE, "-local");
 		ArgsParser.getInstance().add(ArgsParser.Argument.RECURSIVE, ArgsParser.Type.NONE, "-recursive");
 		ArgsParser.getInstance().add(ArgsParser.Argument.DEBUG, ArgsParser.Type.NONE, "-debug");
 

@@ -33,6 +33,8 @@ public class RenderQueue implements Listener {
 
 	private Queue<Client> clientQueue;
 	private Client currentClient;
+	//	The local client doesn't need to be a list because there really shouldn't be multiple clients rendering on the same computer
+	private UUID localClient;
 
 	private boolean started;
 
@@ -52,6 +54,7 @@ public class RenderQueue implements Listener {
 
 		this.clientQueue = new LinkedList<>();
 		this.currentClient = null;
+		this.localClient = UUID.randomUUID();
 
 		this.started = false;
 
@@ -94,6 +97,11 @@ public class RenderQueue implements Listener {
 						Logger.getInstance().log(Logger.DEBUG, "Client " + msg.getSender() + " will not be sent more videos!");
 						newVideosBlocked.add(msg.getSender());
 						e.cancel();
+						break;
+
+					case SET_LOCAL_CLIENT:
+						Logger.getInstance().log(Logger.DEBUG, "Setting the local client UUID to " + msg.getSender());
+						localClient = msg.getSender();
 						break;
 				}
 				break;
@@ -151,8 +159,14 @@ public class RenderQueue implements Listener {
 
 		while (fileArray.length() < videosToConcatToOne && !renderQueue.isEmpty()) {
 			File file = renderQueue.poll();
-			fileArray.put(file.getName());
-			currentClient.getWriter().write(file);
+
+//			If the current client is a local client just send the full path and not the file
+			if (!localClient.equals(currentClient.getUuid())) {
+				fileArray.put(file.getName());
+				currentClient.getWriter().write(file);
+			} else {
+				fileArray.put(file.getAbsolutePath());
+			}
 		}
 
 		Logger.getInstance().log(Logger.DEBUG, "sending file info");

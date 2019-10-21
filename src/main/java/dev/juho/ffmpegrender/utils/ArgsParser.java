@@ -144,6 +144,7 @@ public class ArgsParser {
 		IGNORE,
 		RECURSIVE,
 		DEBUG,
+		LOCAL,
 	}
 
 }

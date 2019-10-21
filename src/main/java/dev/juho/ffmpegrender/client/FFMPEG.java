@@ -56,7 +56,7 @@ public class FFMPEG {
 
 		String videoName = createVideoName();
 
-		String[] command = buildCommand(10, "ffmpeg -f concat -safe 0 -i tempConcatFile.txt -c copy " + saveFolder + "/" + videoName + "");
+		String[] command = buildCommand("ffmpeg -f concat -safe 0 -i tempConcatFile.txt -c copy \"" + saveFolder + "/" + videoName + "\"");
 		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg concat command: ");
 		Logger.getInstance().log(Logger.DEBUG, command);
 
@@ -104,11 +104,9 @@ public class FFMPEG {
 			return null;
 		}
 
-		String finalName = saveFolder + "/RENDER_" + video;
+		String finalName = " \"" + saveFolder + "/RENDER_" + video + "\"";
 
-		String[] renderOptionsSplit = renderOptions.split(" ");
-
-		String[] command = buildCommand(4 + renderOptionsSplit.length, "ffmpeg -i " + saveFolder + "/" + video, renderOptions, finalName);
+		String[] command = buildCommand("ffmpeg -i \"" + saveFolder + "/" + video + "\" ", renderOptions, " ", finalName);
 
 		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg render command: ");
 		Logger.getInstance().log(Logger.DEBUG, command);
@@ -136,17 +134,21 @@ public class FFMPEG {
 		}
 
 		Logger.getInstance().log(Logger.DEBUG, "Video rendered");
-		return finalName;
+		return finalName.trim();
 	}
 
 	public void deleteCurrentVideos(String concatVideo, String finalVideo) {
-		for (File f : currentVideos) {
-			boolean deleted = f.delete();
-			if (deleted) {
-				Logger.getInstance().log(Logger.DEBUG, f.getAbsolutePath() + " deleted");
-			} else {
-				Logger.getInstance().log(Logger.WARNING, "Couldn't delete " + f.getAbsolutePath());
+		if (!ArgsParser.getInstance().has(ArgsParser.Argument.LOCAL)) {
+			for (File f : currentVideos) {
+				boolean deleted = f.delete();
+				if (deleted) {
+					Logger.getInstance().log(Logger.DEBUG, f.getAbsolutePath() + " deleted");
+				} else {
+					Logger.getInstance().log(Logger.WARNING, "Couldn't delete " + f.getAbsolutePath());
+				}
 			}
+		} else {
+			Logger.getInstance().log(Logger.DEBUG, "Not deleting video files because this is a local client!");
 		}
 
 		String saveFolder = "files";
