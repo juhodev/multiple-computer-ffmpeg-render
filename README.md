@@ -32,6 +32,7 @@ You have to have [FFMPEG](https://www.ffmpeg.org) installed on your system.
 -address       address of the server
 -port          port of the server
 -s_folder      folder where files will be saved (./files by default)
+-local         tells the server that the client is on the same computer (reduces file copies)
 -debug         debug logs
 ```
 
