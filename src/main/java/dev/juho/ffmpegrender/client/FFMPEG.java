@@ -192,19 +192,19 @@ public class FFMPEG {
 		return name;
 	}
 
-	private String[] buildCommand(int size, String... commands) {
-		String[] cmd = new String[size];
-		int position = 0;
+	private String[] buildCommand(String... commands) {
+		List<String> cmd = new ArrayList<>();
 
 		for (String command : commands) {
 			String[] words = command.split(" ");
 
-			for (String word : words) {
-				cmd[position++] = word;
-			}
+			cmd.addAll(Arrays.asList(words));
 		}
 
-		return cmd;
+		String[] cmdArray = new String[cmd.size()];
+		cmd.toArray(cmdArray);
+
+		return cmdArray;
 	}
 
 }
