@@ -106,7 +106,7 @@ public class FFMPEG {
 
 		String finalName = " \"" + saveFolder + "/RENDER_" + video + "\"";
 
-		String[] command = buildCommand("ffmpeg -i \"" + saveFolder + "/" + video + "\" ", renderOptions, " ", finalName);
+		String[] command = buildCommand("ffmpeg -i \"" + saveFolder + "/" + video + "\" ", renderOptions, finalName);
 
 		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg render command: ");
 		Logger.getInstance().log(Logger.DEBUG, command);
@@ -208,7 +208,6 @@ public class FFMPEG {
 					builder.setLength(0);
 				} else if (c == '\"') {
 					insideQuotes = !insideQuotes;
-					builder.append(c);
 				} else {
 					builder.append(command.charAt(i));
 				}
