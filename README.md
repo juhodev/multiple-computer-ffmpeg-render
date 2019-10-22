@@ -8,7 +8,7 @@ I built this mostly because I wanted to try to build my own java server so this 
 
 ## Prerequisites
 
-You have to have [FFMPEG](https://www.ffmpeg.org) installed on your system.
+You have to have [FFmpeg](https://www.ffmpeg.org) installed on your system.
 
 ## Args
 
