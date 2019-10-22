@@ -59,6 +59,7 @@ public class RenderQueue implements Listener {
 		this.started = false;
 
 		readFoldersFromArgs();
+		updateRenderOptions();
 	}
 
 	public void start() {
@@ -227,7 +228,6 @@ public class RenderQueue implements Listener {
 		}
 
 		StringBuilder builder = new StringBuilder();
-
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(infoFile)));
 
 		String line;
@@ -277,6 +277,69 @@ public class RenderQueue implements Listener {
 	private void addFolder(String path) {
 		Logger.getInstance().log(Logger.DEBUG, path + " added to render queue");
 		folderPaths.add(path);
+	}
+
+	private void updateRenderOptions() {
+		boolean fileCreated = false;
+		try {
+			fileCreated = writeDefaultRenderOptions();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (!fileCreated) {
+			try {
+				readFFMPEGRenderOptions();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Write default render options to a file if it doesn't exists
+	 *
+	 * @return If the default file was created
+	 * @throws IOException
+	 */
+	private boolean writeDefaultRenderOptions() throws IOException {
+		String saveFolder = "files";
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+			saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
+
+		File saveFile = new File(saveFolder + "/render-options.txt");
+
+		if (!saveFile.exists()) {
+			Logger.getInstance().log(Logger.DEBUG, "render-options.txt doesn't exist! Creating it with default render options");
+			FileWriter writer = new FileWriter(saveFile);
+			writer.write("# Default render options (the full command will be ffmpeg -i [file] [render options] [out_file]\n" + renderOptions + "\n");
+			writer.flush();
+			writer.close();
+			return true;
+		}
+
+		return false;
+	}
+
+	private void readFFMPEGRenderOptions() throws IOException {
+		String saveFolder = "files";
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
+			saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
+
+		File saveFile = new File(saveFolder + "/render-options.txt");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(saveFile)));
+
+		String line;
+		while ((line = reader.readLine()) != null) {
+			// Ignore empty lines and comments
+			if (line.isEmpty() || line.startsWith("#")) {
+				continue;
+			}
+
+			Logger.getInstance().log(Logger.DEBUG, "Setting render options to " + line);
+			renderOptions = line;
+			break;
+		}
 	}
 
 }
