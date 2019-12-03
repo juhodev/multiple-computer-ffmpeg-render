@@ -31,13 +31,36 @@ public class Main {
 		ArgsParser.getInstance().add(ArgsParser.Argument.IGNORE, ArgsParser.Type.LIST, "-ignore", "-ignore_files_under", "-ignore_subfolder");
 		ArgsParser.getInstance().add(ArgsParser.Argument.LOCAL, ArgsParser.Type.NONE, "-local");
 		ArgsParser.getInstance().add(ArgsParser.Argument.RECURSIVE, ArgsParser.Type.NONE, "-recursive");
+		ArgsParser.getInstance().add(ArgsParser.Argument.HELP, ArgsParser.Type.NONE, "-help");
 		ArgsParser.getInstance().add(ArgsParser.Argument.DEBUG, ArgsParser.Type.NONE, "-debug");
-
 		ArgsParser.getInstance().parse(args);
 
 		if (ArgsParser.getInstance().has(ArgsParser.Argument.DEBUG)) {
 			Logger.LOG_LEVEL = Logger.DEBUG;
 			Logger.getInstance().log(Logger.DEBUG, "DEBUG MODE ENABLED");
+		}
+
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.HELP)) {
+			Logger.getInstance().log(Logger.INFO, "Usage: java -jar ffmpegrender.jar [options...]");
+			Logger.getInstance().log(Logger.INFO, "Server options: ");
+			Logger.getInstance().log(Logger.INFO, "\t-server                    runs the program as a server");
+			Logger.getInstance().log(Logger.INFO, "\t-port <port>               port that the server will use");
+			Logger.getInstance().log(Logger.INFO, "\t-videos_in_one <number>    number of videos that will be concatenated to one (disabled by default)");
+			Logger.getInstance().log(Logger.INFO, "\t-s_folder <path>           folder where files will be saved (./by default)");
+			Logger.getInstance().log(Logger.INFO, "\t-r_folder <path>           folder where videos that will be rendered are located");
+			Logger.getInstance().log(Logger.INFO, "\t-recursive                 include files that are in subfolders of folders specified with -r_folder");
+			Logger.getInstance().log(Logger.INFO, "\t-ignore <name>             folders with <name> will be ignored");
+			Logger.getInstance().log(Logger.INFO, "\t-debug                     debug logs");
+			Logger.getInstance().log(Logger.INFO, "");
+			Logger.getInstance().log(Logger.INFO, "Client options: ");
+			Logger.getInstance().log(Logger.INFO, "\t-client                    runs the program as a client");
+			Logger.getInstance().log(Logger.INFO, "\t-address <address>         address (ip or domain) of the server");
+			Logger.getInstance().log(Logger.INFO, "\t-port <port>               port of the server");
+			Logger.getInstance().log(Logger.INFO, "\t-s_folder <path>           folder where files will be saved (./by default)");
+			Logger.getInstance().log(Logger.INFO, "\t-local                     tells the server that the client is on the same computer and video files");
+			Logger.getInstance().log(Logger.INFO, "\t                           don't need to be copied");
+			Logger.getInstance().log(Logger.INFO, "\t-debug                     debug logs");
+			System.exit(0);
 		}
 
 		setupFolders(ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER));
