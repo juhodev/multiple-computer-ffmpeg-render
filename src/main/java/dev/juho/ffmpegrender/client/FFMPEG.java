@@ -12,10 +12,12 @@ public class FFMPEG {
 
 	private List<File> currentVideos;
 	private String renderOptions;
+	private RenderFile renderFile;
 
 	public FFMPEG() {
 		this.currentVideos = new ArrayList<>();
 		this.renderOptions = "";
+		this.renderFile = new RenderFile();
 	}
 
 	public void setRenderOptions(String renderOptions) {
@@ -71,6 +73,7 @@ public class FFMPEG {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
+					renderFile.updateProgress(line);
 					Logger.getInstance().log(Logger.DEBUG, line);
 				}
 			} catch (Exception e) {
@@ -103,6 +106,9 @@ public class FFMPEG {
 			Logger.getInstance().log(Logger.ERROR, "Render options not set for some reason");
 			return null;
 		}
+
+		renderFile.reset();
+		getVideoDurationInSeconds(new File(video));
 
 		String finalName = " \"" + saveFolder + "/RENDER_" + video + "\"";
 
@@ -184,6 +190,10 @@ public class FFMPEG {
 
 	public int getVideoCount() {
 		return currentVideos.size();
+	}
+
+	public RenderFile getRenderFile() {
+		return renderFile;
 	}
 
 	private String createVideoName() {

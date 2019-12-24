@@ -115,6 +115,10 @@ public class FFMPEGClient implements Client, Listener {
 		shutdownAfterRender = true;
 	}
 
+	public FFMPEG getFfmpeg() {
+		return ffmpeg;
+	}
+
 	private void readMessage(Message message) {
 		switch (message.getType()) {
 			case SET_UUID:
