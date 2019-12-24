@@ -146,6 +146,7 @@ public class ArgsParser {
 		DEBUG,
 		LOCAL,
 		HELP,
+		AUTO_BUILD,
 	}
 
 }

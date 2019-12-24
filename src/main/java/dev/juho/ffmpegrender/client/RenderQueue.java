@@ -60,6 +60,10 @@ public class RenderQueue implements Listener {
 
 		readFoldersFromArgs();
 		updateRenderOptions();
+
+		if (ArgsParser.getInstance().has(ArgsParser.Argument.AUTO_BUILD)) {
+			build();
+		}
 	}
 
 	public void start() {
@@ -147,7 +151,6 @@ public class RenderQueue implements Listener {
 	private void updateQueue() {
 		if (!queueBuilt) {
 			build();
-			queueBuilt = true;
 		}
 
 		if (renderQueue.isEmpty()) {
@@ -199,6 +202,8 @@ public class RenderQueue implements Listener {
 
 			addVideoFilesToQueue(f, ArgsParser.getInstance().has(ArgsParser.Argument.RECURSIVE));
 		}
+		
+		queueBuilt = true;
 	}
 
 	private void addVideoFilesToQueue(File folder, boolean recursive) {

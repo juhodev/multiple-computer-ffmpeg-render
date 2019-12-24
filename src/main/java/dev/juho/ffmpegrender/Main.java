@@ -33,6 +33,7 @@ public class Main {
 		ArgsParser.getInstance().add(ArgsParser.Argument.RECURSIVE, ArgsParser.Type.NONE, "-recursive");
 		ArgsParser.getInstance().add(ArgsParser.Argument.HELP, ArgsParser.Type.NONE, "-help");
 		ArgsParser.getInstance().add(ArgsParser.Argument.DEBUG, ArgsParser.Type.NONE, "-debug");
+		ArgsParser.getInstance().add(ArgsParser.Argument.AUTO_BUILD, ArgsParser.Type.NONE, "-auto_build", "-auto", "-build");
 		ArgsParser.getInstance().parse(args);
 
 		if (ArgsParser.getInstance().has(ArgsParser.Argument.DEBUG)) {
@@ -50,6 +51,7 @@ public class Main {
 			Logger.getInstance().log(Logger.INFO, "\t-r_folder <path>           folder where videos that will be rendered are located");
 			Logger.getInstance().log(Logger.INFO, "\t-recursive                 include files that are in subfolders of folders specified with -r_folder");
 			Logger.getInstance().log(Logger.INFO, "\t-ignore <name>             folders with <name> will be ignored");
+			Logger.getInstance().log(Logger.INFO, "\t-auto_build                builds the render queue on startup rather than when render command is executed");
 			Logger.getInstance().log(Logger.INFO, "\t-debug                     debug logs");
 			Logger.getInstance().log(Logger.INFO, "");
 			Logger.getInstance().log(Logger.INFO, "Client options: ");

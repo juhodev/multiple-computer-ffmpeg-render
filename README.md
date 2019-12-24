@@ -22,6 +22,7 @@ You have to have [FFmpeg](https://www.ffmpeg.org) installed on your system.
 -r_folder           folder where not yet rendered files are located
 -recursive          include files that are in subfolders of the folder specified with -r_folder
 -ignore             folders with the name will be ignored (See Ignoring folders example)
+-auto_build         builds the render queue on startup rather than when render command is executed
 -debug              debug logs
 ```
 
