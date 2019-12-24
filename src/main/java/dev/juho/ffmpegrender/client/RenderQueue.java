@@ -248,7 +248,15 @@ public class RenderQueue implements Listener {
 
 			for (int j = 0; j < filesArray.length(); j++) {
 				String videoName = filesArray.getString(j);
-				filesToIgnore.add(videoName);
+
+				// HACKHACKHACK my videoInfo.json contains BOTH full paths and file names and when creating a queue
+				// files get ignored with their name and not the full path to file :)
+				File f = new File(videoName);
+				if (f.exists()) {
+					filesToIgnore.add(f.getName());
+				} else {
+					filesToIgnore.add(videoName);
+				}
 			}
 		}
 
