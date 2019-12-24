@@ -109,7 +109,12 @@ public class FileData implements ReaderData {
 
 	@Override
 	public void close() throws IOException {
+		Logger.getInstance().log(Logger.DEBUG, "Closing FileData for " + nameBuffer.toString());
 		if (!closed) {
+			nameLengthBuffer.clear();
+			nameBuffer.clear();
+			fileLengthBuffer.clear();
+
 			closed = true;
 			fileOS.flush();
 			fileOS.close();

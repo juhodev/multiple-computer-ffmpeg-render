@@ -54,6 +54,7 @@ public class Reader extends Thread {
 						offset += readerData.getLength();
 
 						if (readerData.isFull()) {
+							readerData.close();
 							readerData = null;
 						}
 					}
