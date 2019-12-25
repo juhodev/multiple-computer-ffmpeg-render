@@ -83,7 +83,7 @@ public class RenderFile {
 
 				int hours = Integer.parseInt(timeSplit[0]);
 				int minutes = Integer.parseInt(timeSplit[1]);
-				int seconds = Integer.parseInt(timeSplit[2]);
+				int seconds = (int) Double.parseDouble(timeSplit[2]);
 
 				duration = hours * 60 * 60 + minutes * 60 + seconds;
 			}
