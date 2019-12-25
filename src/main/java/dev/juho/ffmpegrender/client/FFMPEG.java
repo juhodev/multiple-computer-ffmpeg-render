@@ -73,7 +73,6 @@ public class FFMPEG {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
-					renderFile.updateProgress(line);
 					Logger.getInstance().log(Logger.DEBUG, line);
 				}
 			} catch (Exception e) {
@@ -127,6 +126,7 @@ public class FFMPEG {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
+					renderFile.updateProgress(line);
 					Logger.getInstance().log(Logger.DEBUG, line);
 				}
 			} catch (Exception e) {
@@ -140,6 +140,7 @@ public class FFMPEG {
 		}
 
 		Logger.getInstance().log(Logger.DEBUG, "Video rendered");
+		Logger.getInstance().removeProgressbar("render");
 		return finalName.trim();
 	}
 

@@ -21,21 +21,18 @@ public class RenderFile {
 	}
 
 	public void updateProgress(String line) {
-		String time = line.split("Duration: ")[1].split(", ")[0];
+		if (line.contains("time=")) {
+			String time = line.split("time=")[1].split(" bitrate")[0];
+			String[] timeSplit = time.split(":");
 
-		int seconds = 0;
-		String[] split = time.split(":");
+			int hours = Integer.parseInt(timeSplit[0]);
+			int minutes = Integer.parseInt(timeSplit[1]);
+			int seconds = (int) Double.parseDouble(timeSplit[2]);
 
-		int hours = Integer.parseInt(split[0]);
-		seconds += hours * 60 * 60;
-
-		int minutes = Integer.parseInt(split[1]);
-		seconds += minutes * 60;
-
-		int splitSeconds = Integer.parseInt(split[2]);
-		seconds += splitSeconds;
-
-		timeRendered = seconds;
+			// Time rendered in seconds
+			timeRendered = hours * 60 * 60 + minutes * 60 + seconds;
+			Logger.getInstance().updateProgressbar("render", timeRendered);
+		}
 	}
 
 	public void init(File f) {
@@ -86,6 +83,7 @@ public class RenderFile {
 				int seconds = (int) Double.parseDouble(timeSplit[2]);
 
 				duration = hours * 60 * 60 + minutes * 60 + seconds;
+				Logger.getInstance().createProgressbar("render", duration);
 			}
 		}
 	}
