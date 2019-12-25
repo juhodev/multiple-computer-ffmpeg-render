@@ -49,9 +49,15 @@ public class Utils {
 					builder.setLength(0);
 				} else if (c == '\"') {
 					insideQuotes = !insideQuotes;
+					builder.append("\"");
 				} else {
 					builder.append(command.charAt(i));
 				}
+			}
+
+			if (builder.length() > 0) {
+				cmd.add(builder.toString());
+				builder.setLength(0);
 			}
 		}
 
