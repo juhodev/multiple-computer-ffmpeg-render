@@ -40,7 +40,7 @@ public class FFMPEG {
 			return null;
 		}
 
-		Logger.getInstance().log(Logger.DEBUG, "Starting to concat video");
+		Logger.getInstance().log(Logger.INFO, "Starting to concat video");
 
 		String saveFolder = "files";
 		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
@@ -86,12 +86,12 @@ public class FFMPEG {
 			e.printStackTrace();
 		}
 
-		Logger.getInstance().log(Logger.DEBUG, "Video concat done");
+		Logger.getInstance().log(Logger.INFO, "Video concat done");
 		return videoName;
 	}
 
 	public String render(String video) throws IOException {
-		Logger.getInstance().log(Logger.DEBUG, "Starting rendering " + video);
+		Logger.getInstance().log(Logger.INFO, "Starting rendering " + video);
 		if (video.isEmpty()) {
 			Logger.getInstance().log(Logger.ERROR, "Couldn't render the video! Name has not been set (current name: " + video + ")");
 			return null;
@@ -139,7 +139,7 @@ public class FFMPEG {
 			e.printStackTrace();
 		}
 
-		Logger.getInstance().log(Logger.DEBUG, "Video rendered");
+		Logger.getInstance().log(Logger.INFO, "Video rendered");
 		Logger.getInstance().removeProgressbar("render");
 		return finalName.trim();
 	}
