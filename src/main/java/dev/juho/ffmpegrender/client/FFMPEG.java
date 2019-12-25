@@ -12,10 +12,12 @@ public class FFMPEG {
 
 	private List<File> currentVideos;
 	private String renderOptions;
+	private RenderFile renderFile;
 
 	public FFMPEG() {
 		this.currentVideos = new ArrayList<>();
 		this.renderOptions = "";
+		this.renderFile = new RenderFile();
 	}
 
 	public void setRenderOptions(String renderOptions) {
@@ -38,7 +40,7 @@ public class FFMPEG {
 			return null;
 		}
 
-		Logger.getInstance().log(Logger.DEBUG, "Starting to concat video");
+		Logger.getInstance().log(Logger.INFO, "Starting to concat video");
 
 		String saveFolder = "files";
 		if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
@@ -56,7 +58,7 @@ public class FFMPEG {
 
 		String videoName = createVideoName();
 
-		String[] command = buildCommand("ffmpeg -f concat -safe 0 -i tempConcatFile.txt -c copy \"" + saveFolder + "/" + videoName + "\"");
+		String[] command = Utils.buildCommand("ffmpeg -f concat -safe 0 -i tempConcatFile.txt -c copy \"" + saveFolder + "/" + videoName + "\"");
 		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg concat command: ");
 		Logger.getInstance().log(Logger.DEBUG, command);
 
@@ -84,12 +86,12 @@ public class FFMPEG {
 			e.printStackTrace();
 		}
 
-		Logger.getInstance().log(Logger.DEBUG, "Video concat done");
+		Logger.getInstance().log(Logger.INFO, "Video concat done");
 		return videoName;
 	}
 
 	public String render(String video) throws IOException {
-		Logger.getInstance().log(Logger.DEBUG, "Starting rendering " + video);
+		Logger.getInstance().log(Logger.INFO, "Starting rendering " + video);
 		if (video.isEmpty()) {
 			Logger.getInstance().log(Logger.ERROR, "Couldn't render the video! Name has not been set (current name: " + video + ")");
 			return null;
@@ -104,9 +106,12 @@ public class FFMPEG {
 			return null;
 		}
 
+		renderFile.reset();
+		renderFile.init(new File(saveFolder + "/" + video));
+
 		String finalName = " \"" + saveFolder + "/RENDER_" + video + "\"";
 
-		String[] command = buildCommand("ffmpeg -i \"" + saveFolder + "/" + video + "\" ", renderOptions, finalName);
+		String[] command = Utils.buildCommand("ffmpeg -i \"" + saveFolder + "/" + video + "\" ", renderOptions, finalName);
 
 		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg render command: ");
 		Logger.getInstance().log(Logger.DEBUG, command);
@@ -121,6 +126,7 @@ public class FFMPEG {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
+					renderFile.updateProgress(line);
 					Logger.getInstance().log(Logger.DEBUG, line);
 				}
 			} catch (Exception e) {
@@ -133,7 +139,8 @@ public class FFMPEG {
 			e.printStackTrace();
 		}
 
-		Logger.getInstance().log(Logger.DEBUG, "Video rendered");
+		Logger.getInstance().log(Logger.INFO, "Video rendered");
+		Logger.getInstance().removeProgressbar("render");
 		return finalName.trim();
 	}
 
@@ -184,6 +191,10 @@ public class FFMPEG {
 
 	public int getVideoCount() {
 		return currentVideos.size();
+	}
+
+	public RenderFile getRenderFile() {
+		return renderFile;
 	}
 
 	private String createVideoName() {
