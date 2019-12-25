@@ -108,7 +108,7 @@ public class FFMPEG {
 		}
 
 		renderFile.reset();
-		getVideoDurationInSeconds(new File(video));
+		renderFile.init(new File(saveFolder + "/" + video));
 
 		String finalName = " \"" + saveFolder + "/RENDER_" + video + "\"";
 
