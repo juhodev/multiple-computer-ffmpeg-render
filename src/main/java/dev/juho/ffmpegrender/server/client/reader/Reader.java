@@ -45,6 +45,8 @@ public class Reader extends Thread {
 									saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
 
 								readerData = new FileData(saveFolder);
+							} else if (identifier == MessageIdentifier.PING) {
+								break;
 							}
 						} else {
 							readerData.resetLength();

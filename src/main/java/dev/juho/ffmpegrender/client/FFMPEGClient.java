@@ -5,6 +5,7 @@ import dev.juho.ffmpegrender.events.EventBus;
 import dev.juho.ffmpegrender.events.EventType;
 import dev.juho.ffmpegrender.events.Listener;
 import dev.juho.ffmpegrender.events.events.ClientDisconnectEvent;
+import dev.juho.ffmpegrender.events.events.CrashEvent;
 import dev.juho.ffmpegrender.server.client.Client;
 import dev.juho.ffmpegrender.server.client.Writer;
 import dev.juho.ffmpegrender.server.client.reader.Reader;
@@ -81,6 +82,19 @@ public class FFMPEGClient implements Client, Listener {
 
 		this.reader = new Reader(this, socket.getInputStream());
 		this.reader.start();
+	}
+
+	@Override
+	public void ping() {
+		try {
+			writer.sendPing();
+		} catch (IOException e) {
+			if (ArgsParser.getInstance().has(ArgsParser.Argument.DEBUG)) {
+				e.printStackTrace();
+			}
+			
+			EventBus.getInstance().publish(new CrashEvent(this));
+		}
 	}
 
 	@Override

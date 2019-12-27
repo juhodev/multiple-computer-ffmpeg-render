@@ -14,15 +14,22 @@ import java.util.*;
 
 public class ClientPool implements Listener {
 
+	// Ping interval in MS
+	private final int PING_INTERVAL = 5000;
+
 	private HashMap<UUID, Client> clients;
+	private List<UUID> pingList;
 
 	public ClientPool() {
 		this.clients = new HashMap<>();
+		this.pingList = new ArrayList<>();
+		startPinging();
 	}
 
 	public void add(Client client) {
 		Logger.getInstance().log(Logger.DEBUG, client.getUuid().toString() + " added to client pool");
 		this.clients.put(client.getUuid(), client);
+		this.pingList.add(client.getUuid());
 		try {
 			client.listen();
 		} catch (IOException e) {
@@ -57,6 +64,7 @@ public class ClientPool implements Listener {
 
 		Logger.getInstance().log(Logger.INFO, "Client " + client.getUuid() + " killed");
 		clients.remove(client.getUuid());
+		removeClient(client.getUuid());
 	}
 
 	public void sendAll(Message message) {
@@ -77,6 +85,7 @@ public class ClientPool implements Listener {
 				if (msg.getType() == MessageType.GOODBYE) {
 					UUID uuid = msg.getSender();
 					clients.remove(uuid);
+					removeClient(uuid);
 					Logger.getInstance().log(Logger.DEBUG, "Received a goodbye message from client " + uuid);
 				}
 				break;
@@ -92,5 +101,26 @@ public class ClientPool implements Listener {
 	@Override
 	public List<EventType> supports() {
 		return Arrays.asList(EventType.MESSAGE, EventType.CRASH);
+	}
+
+	private void startPinging() {
+		new Timer().scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				for (int i = 0; i < pingList.size(); i++) {
+					Client client = clients.get(pingList.get(i));
+					client.ping();
+				}
+			}
+		}, PING_INTERVAL, PING_INTERVAL);
+	}
+
+	private void removeClient(UUID uuid) {
+		for (int i = 0; i < pingList.size(); i++) {
+			if (pingList.get(i).equals(uuid)) {
+				pingList.remove(i);
+				return;
+			}
+		}
 	}
 }

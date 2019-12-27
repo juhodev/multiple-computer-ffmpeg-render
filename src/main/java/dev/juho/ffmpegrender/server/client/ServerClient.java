@@ -3,10 +3,12 @@ package dev.juho.ffmpegrender.server.client;
 import dev.juho.ffmpegrender.events.EventBus;
 import dev.juho.ffmpegrender.events.events.ClientDisconnectEvent;
 import dev.juho.ffmpegrender.events.events.ConnectEvent;
+import dev.juho.ffmpegrender.events.events.CrashEvent;
 import dev.juho.ffmpegrender.server.Server;
 import dev.juho.ffmpegrender.server.client.reader.Reader;
 import dev.juho.ffmpegrender.server.message.Message;
 import dev.juho.ffmpegrender.server.message.MessageType;
+import dev.juho.ffmpegrender.utils.ArgsParser;
 import dev.juho.ffmpegrender.utils.Logger;
 import org.json.JSONObject;
 
@@ -61,6 +63,19 @@ public class ServerClient implements Client {
 	@Override
 	public long getUptime() {
 		return new Date().getTime() - startTime;
+	}
+
+	@Override
+	public void ping() {
+		try {
+			writer.sendPing();
+		} catch (IOException e) {
+			if (ArgsParser.getInstance().has(ArgsParser.Argument.DEBUG)) {
+				e.printStackTrace();
+			}
+
+			EventBus.getInstance().publish(new CrashEvent(this));
+		}
 	}
 
 	@Override

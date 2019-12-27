@@ -16,6 +16,8 @@ public interface Client {
 
 	long getUptime();
 
+	void ping();
+
 	void listen() throws IOException;
 
 	void kill() throws IOException;

@@ -50,6 +50,10 @@ public class Writer {
 		}
 	}
 
+	public void sendPing() throws IOException {
+		os.write(MessageIdentifier.PING);
+	}
+
 	private ByteBuffer createFileInfoBuffer(long fileLength, String name) {
 		int nameLength = name.getBytes().length;
 
