@@ -85,6 +85,7 @@ public class Main {
 			cmdExecutor.register(new RenderCommand(server.getClientPool(), renderQueue));
 			cmdExecutor.register(new QueueCommand(renderQueue));
 			cmdExecutor.register(new AddFolderCommand(renderQueue));
+			cmdExecutor.register(new ProgressCommand());
 		} else if (ArgsParser.getInstance().has(ArgsParser.Argument.CLIENT)) {
 			if (!ArgsParser.getInstance().has(ArgsParser.Argument.ADDRESS) && !ArgsParser.getInstance().has(ArgsParser.Argument.PORT)) {
 				Logger.getInstance().log(Logger.ERROR, "-host or -port missing!");

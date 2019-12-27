@@ -2,6 +2,7 @@ package dev.juho.ffmpegrender.server.client;
 
 import dev.juho.ffmpegrender.server.client.reader.FileData;
 import dev.juho.ffmpegrender.server.message.Message;
+import dev.juho.ffmpegrender.server.stats.RenderHistory;
 import dev.juho.ffmpegrender.utils.Logger;
 
 import java.io.*;
@@ -41,6 +42,7 @@ public class Writer {
 				fileSent += read;
 				os.write(buffer, 0, read);
 				Logger.getInstance().updateProgressbar("Sending file", fileSent);
+				RenderHistory.getInstance().addBytesSent(read);
 			}
 
 			Logger.getInstance().removeProgressbar("Sending file");

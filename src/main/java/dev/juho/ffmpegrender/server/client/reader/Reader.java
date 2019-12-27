@@ -4,6 +4,7 @@ import dev.juho.ffmpegrender.events.EventBus;
 import dev.juho.ffmpegrender.events.events.CrashEvent;
 import dev.juho.ffmpegrender.server.client.Client;
 import dev.juho.ffmpegrender.server.client.MessageIdentifier;
+import dev.juho.ffmpegrender.server.stats.RenderHistory;
 import dev.juho.ffmpegrender.utils.ArgsParser;
 import dev.juho.ffmpegrender.utils.Logger;
 
@@ -32,6 +33,7 @@ public class Reader extends Thread {
 
 				int read;
 				while ((read = bis.read(buffer)) != -1) {
+					RenderHistory.getInstance().addBytesReceived(read);
 					int offset = 0;
 					while (offset < read) {
 						if (readerData == null) {
