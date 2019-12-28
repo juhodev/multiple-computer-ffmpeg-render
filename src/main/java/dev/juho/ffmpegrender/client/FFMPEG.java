@@ -52,7 +52,7 @@ public class FFMPEG {
 		PrintWriter writer = new PrintWriter(new FileWriter(file));
 
 		for (File f : currentVideos) {
-			writer.println("file '" + f.getAbsolutePath() + "'");
+			writer.println("file '" + f.getAbsolutePath().replaceAll("'", "'\\\\''") + "'");
 		}
 
 		writer.flush();
