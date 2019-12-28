@@ -1,5 +1,7 @@
 package dev.juho.ffmpegrender.client;
 
+import dev.juho.ffmpegrender.events.EventBus;
+import dev.juho.ffmpegrender.events.events.RenderProgressEvent;
 import dev.juho.ffmpegrender.utils.ArgsParser;
 import dev.juho.ffmpegrender.utils.Logger;
 import dev.juho.ffmpegrender.utils.Utils;
@@ -141,6 +143,7 @@ public class FFMPEG {
 
 		Logger.getInstance().log(Logger.INFO, "Video rendered");
 		Logger.getInstance().removeProgressbar("render");
+		EventBus.getInstance().publish(new RenderProgressEvent(0));
 		return finalName.trim();
 	}
 

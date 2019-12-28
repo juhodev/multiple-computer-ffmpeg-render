@@ -9,6 +9,7 @@ import dev.juho.ffmpegrender.server.Server;
 import dev.juho.ffmpegrender.server.client.Client;
 import dev.juho.ffmpegrender.server.message.Message;
 import dev.juho.ffmpegrender.server.message.MessageType;
+import dev.juho.ffmpegrender.server.stats.RenderHistory;
 import dev.juho.ffmpegrender.utils.ArgsParser;
 import dev.juho.ffmpegrender.utils.Logger;
 import org.json.JSONArray;
@@ -108,6 +109,10 @@ public class RenderQueue implements Listener {
 						Logger.getInstance().log(Logger.DEBUG, "Setting the local client UUID to " + msg.getSender());
 						localClient = msg.getSender();
 						break;
+
+					case UPDATE_RENDER_PROGRESS:
+						RenderHistory.getInstance().updateProgress(msg.getSender(), msg.getData().getDouble("progress"));
+						break;
 				}
 				break;
 
@@ -202,7 +207,7 @@ public class RenderQueue implements Listener {
 
 			addVideoFilesToQueue(f, ArgsParser.getInstance().has(ArgsParser.Argument.RECURSIVE));
 		}
-		
+
 		queueBuilt = true;
 	}
 

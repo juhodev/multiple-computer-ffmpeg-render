@@ -6,6 +6,7 @@ import dev.juho.ffmpegrender.events.EventType;
 import dev.juho.ffmpegrender.events.Listener;
 import dev.juho.ffmpegrender.events.events.ClientDisconnectEvent;
 import dev.juho.ffmpegrender.events.events.CrashEvent;
+import dev.juho.ffmpegrender.events.events.RenderProgressEvent;
 import dev.juho.ffmpegrender.server.client.Client;
 import dev.juho.ffmpegrender.server.client.Writer;
 import dev.juho.ffmpegrender.server.client.reader.Reader;
@@ -92,7 +93,7 @@ public class FFMPEGClient implements Client, Listener {
 			if (ArgsParser.getInstance().has(ArgsParser.Argument.DEBUG)) {
 				e.printStackTrace();
 			}
-			
+
 			EventBus.getInstance().publish(new CrashEvent(this));
 		}
 	}
@@ -116,12 +117,18 @@ public class FFMPEGClient implements Client, Listener {
 				Logger.getInstance().log(Logger.DEBUG, "Received message: " + message.getData().toString());
 				readMessage(message);
 				break;
+
+			case RENDER_PROGRESS:
+				RenderProgressEvent renderProgress = (RenderProgressEvent) e;
+				writer.write(Message.build(MessageType.UPDATE_RENDER_PROGRESS, uuid, new JSONObject().put("progress", renderProgress.getData())));
+				e.cancel();
+				break;
 		}
 	}
 
 	@Override
 	public List<EventType> supports() {
-		return Arrays.asList(EventType.MESSAGE);
+		return Arrays.asList(EventType.MESSAGE, EventType.RENDER_PROGRESS);
 	}
 
 	public void shutdownAfterRender() {

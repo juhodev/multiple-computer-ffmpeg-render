@@ -43,4 +43,8 @@ public class RenderHistory {
 	public long getBytesSent() {
 		return bytesSent;
 	}
+
+	public HashMap<UUID, Double> getProgress() {
+		return progress;
+	}
 }

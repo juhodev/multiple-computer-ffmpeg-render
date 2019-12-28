@@ -1,5 +1,9 @@
 package dev.juho.ffmpegrender.client;
 
+import dev.juho.ffmpegrender.events.EventBus;
+import dev.juho.ffmpegrender.events.events.RenderProgressEvent;
+import dev.juho.ffmpegrender.server.client.Writer;
+import dev.juho.ffmpegrender.server.message.Message;
 import dev.juho.ffmpegrender.utils.Logger;
 import dev.juho.ffmpegrender.utils.Utils;
 
@@ -30,7 +34,11 @@ public class RenderFile {
 			int seconds = (int) Double.parseDouble(timeSplit[2]);
 
 			// Time rendered in seconds
-			timeRendered = hours * 60 * 60 + minutes * 60 + seconds;
+			int newTimeRendered = hours * 60 * 60 + minutes * 60 + seconds;
+			if (newTimeRendered != timeRendered) {
+				timeRendered = newTimeRendered;
+				EventBus.getInstance().publish(new RenderProgressEvent((double) timeRendered / (double) duration));
+			}
 			Logger.getInstance().updateProgressbar("render", timeRendered);
 		}
 	}
