@@ -196,10 +196,6 @@ public class FFMPEG {
 		return currentVideos.size();
 	}
 
-	public RenderFile getRenderFile() {
-		return renderFile;
-	}
-
 	private String createVideoName() {
 		String name = currentVideos.get(0).getName();
 		name += "-";
@@ -207,35 +203,4 @@ public class FFMPEG {
 		name += "_" + Utils.randomString() + ".mp4";
 		return name;
 	}
-
-	private String[] buildCommand(String... commands) {
-		List<String> cmd = new ArrayList<>();
-
-		boolean insideQuotes = false;
-		StringBuilder builder = new StringBuilder();
-		for (String command : commands) {
-			for (int i = 0; i < command.length(); i++) {
-				char c = command.charAt(i);
-
-				if (c == ' ' && !insideQuotes) {
-					cmd.add(builder.toString());
-					builder.setLength(0);
-				} else if (c == '\"') {
-					insideQuotes = !insideQuotes;
-				} else {
-					builder.append(command.charAt(i));
-				}
-			}
-		}
-
-		if (builder.length() > 0) {
-			cmd.add(builder.toString());
-		}
-
-		String[] cmdArray = new String[cmd.size()];
-		cmd.toArray(cmdArray);
-
-		return cmdArray;
-	}
-
 }
