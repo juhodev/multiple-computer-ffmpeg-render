@@ -10,31 +10,33 @@ I built this mostly because I wanted to try to build my own java server so this 
 
 You have to have [FFmpeg](https://www.ffmpeg.org) installed on your system.
 
-## Args
+## Options
 
-### Server args
+### Server options
 
 ```
--server             runs the program as a server
--port               port on which the server should be ran on
--videos_in_one      how many videos will be concatenated to one (disabled by default)
--s_folder           folder where files will be saved (./files by default)
--r_folder           folder where not yet rendered files are located
--recursive          include files that are in subfolders of the folder specified with -r_folder
--ignore             folders with the name will be ignored (See Ignoring folders example)
 -auto_build         builds the render queue on startup rather than when render command is executed
 -debug              debug logs
+-help               shows available options
+-ignore             folders with the name will be ignored (See Ignoring folders example)
+-port               port on which the server should be ran on
+-r_folder           folder where not yet rendered files are located
+-recursive          include files that are in subfolders of the folder specified with -r_folder
+-s_folder           folder where files will be saved (./files by default)
+-server             runs the program as a server
+-videos_in_one      how many videos will be concatenated to one (disabled by default)
 ```
 
-### Client args
+### Client options
 
 ```
--client        runs the program as a client
--address       address of the server
--port          port of the server
--s_folder      folder where files will be saved (./files by default)
--local         tells the server that the client is on the same computer (reduces file copies)
--debug         debug logs
+-address            address of the server
+-client             runs the program as a client
+-debug              debug logs
+-help               shows available options
+-local              tells the server that the client is on the same computer (reduces file copies)
+-port               port of the server
+-s_folder           folder where files will be saved (./files by default)
 ```
 
 ## Commands
@@ -44,17 +46,18 @@ These commands can be ran when the program is open.
 ### Server commands
 
 ```
+add_folder     lets you to add a folder after starting so you don't need to restart the program and reconnect all the clients
+progress       shows render progress of clients
+queue          print the not yet rendered video queue
+render         starts sending videos to clients
 server         tells you info about connected clients
 stop           shutsdown the server and clients
-render         starts sending videos to clients
-queue          print the not yet rendered video queue
-add_folder     lets you to add a folder after starting so you don't need to restart the program and reconnect all the clients
 ```
 
 ### Client commands
 
 ```
-stop     stops the client _after_ the current render is done
+stop           stops the client _after_ the current render is done
 ```
 
 ## Examples
