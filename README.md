@@ -4,7 +4,8 @@ A program for rendering videos with multiple computers.
 
 ## Warning
 
-I built this mostly because I wanted to try to build my own java server so this might break when you use it (that being said I did render over 1k videos with it without it breaking).
+* No encryption
+* I built this mostly because I wanted to try to build my own java server so this might break when you use it (that being said I did render over 1k videos with it without it breaking).
 
 ## Prerequisites
 
