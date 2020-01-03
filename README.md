@@ -4,7 +4,7 @@ A program for rendering videos with multiple computers.
 
 ## Warning
 
-* No encryption
+* No encryption (for now)
 * I built this mostly because I wanted to try to build my own java server so this might break when you use it (that being said I did render over 1k videos with it without it breaking).
 
 ## Prerequisites
@@ -42,7 +42,7 @@ You have to have [FFmpeg](https://www.ffmpeg.org) installed on your system and i
 
 ## Commands
 
-These commands can be ran when the program is open.
+These commands can be used when the program is running.
 
 ### Server commands
 
