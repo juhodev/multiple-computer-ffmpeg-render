@@ -9,7 +9,7 @@ A program for rendering videos with multiple computers.
 
 ## Prerequisites
 
-You have to have [FFmpeg](https://www.ffmpeg.org) installed on your system.
+You have to have [FFmpeg](https://www.ffmpeg.org) installed on your system and it must be added to path.
 
 ## Options
 
