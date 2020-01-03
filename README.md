@@ -67,17 +67,17 @@ stop           stops the client _after_ the current render is done
 
 #### Basic usage
 
-`java -jar ffmpegrender-1.0.jar -server -port 7592 -r_folder G:/videos`
+`java -jar multiple-computer-render-1.0.jar -server -port 7592 -r_folder G:/videos`
 
 The server will send video files to clients from the `G:/videos` folder.
 
 #### Multiple folders
 
-`java -jar ffmpegrender-1.0.jar -server -port 7592 -r_folder G:/videos -r_folder G:/path/to/other/folder`
+`java -jar multiple-computer-render-1.0.jar -server -port 7592 -r_folder G:/videos -r_folder G:/path/to/other/folder`
 
 #### Ignoring folders
 
-`java -jar ffmpegrender-1.0.jar -server -port 7592 -r_folder G:/videos -recursive -ignore ignore_files_under_this`
+`java -jar multiple-computer-render-1.0.jar -server -port 7592 -r_folder G:/videos -recursive -ignore ignore_files_under_this`
 
 All files under folders named `ignore_files_under_this` will be ignored and files in `videos` and `other_videos` will be rendered.
 
@@ -98,6 +98,11 @@ G:
 
 #### Basic usage
 
-Connects to a server running at `localhost:7592`
+Connects to a server running at `192.168.1.23:7592`
 
-`java -jar ffmpegrender-1.0.jar -client -address localhost -port 7592`
+`java -jar multiple-computer-render-1.0.jar -client -address 192.168.1.23 -port 7592`
+
+
+#### Local client
+
+`java -jar multiple-computer-render-1.0.jar -client -address localhost -port 7592 -local`
