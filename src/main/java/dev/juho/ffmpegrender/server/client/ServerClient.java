@@ -26,9 +26,15 @@ public class ServerClient implements Client {
 	private Writer writer;
 	private Reader reader;
 
+	private ServerClientType clientType;
+
 	public ServerClient(Socket socket) {
 		this.socket = socket;
 		this.uuid = UUID.randomUUID();
+	}
+
+	public void setClientType(ServerClientType clientType) {
+		this.clientType = clientType;
 	}
 
 	@Override

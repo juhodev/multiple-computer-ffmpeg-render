@@ -8,6 +8,7 @@ import dev.juho.ffmpegrender.events.events.ClientDisconnectEvent;
 import dev.juho.ffmpegrender.events.events.CrashEvent;
 import dev.juho.ffmpegrender.events.events.RenderProgressEvent;
 import dev.juho.ffmpegrender.server.client.Client;
+import dev.juho.ffmpegrender.server.client.ServerClientType;
 import dev.juho.ffmpegrender.server.client.Writer;
 import dev.juho.ffmpegrender.server.client.reader.Reader;
 import dev.juho.ffmpegrender.server.message.Message;
@@ -142,6 +143,7 @@ public class FFMPEGClient implements Client, Listener {
 				this.uuid = UUID.fromString(message.getData().getString("uuid"));
 				if (ArgsParser.getInstance().has(ArgsParser.Argument.LOCAL)) {
 					writer.write(Message.build(MessageType.SET_LOCAL_CLIENT, uuid, new JSONObject()));
+					writer.write(Message.build(MessageType.SET_CLIENT_TYPE, uuid, new JSONObject().put("client_type", ServerClientType.OBSERVER)));
 				}
 				break;
 

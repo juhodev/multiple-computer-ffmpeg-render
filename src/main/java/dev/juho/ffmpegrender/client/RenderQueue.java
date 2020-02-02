@@ -7,6 +7,8 @@ import dev.juho.ffmpegrender.events.events.ConnectEvent;
 import dev.juho.ffmpegrender.server.ClientPool;
 import dev.juho.ffmpegrender.server.Server;
 import dev.juho.ffmpegrender.server.client.Client;
+import dev.juho.ffmpegrender.server.client.ServerClient;
+import dev.juho.ffmpegrender.server.client.ServerClientType;
 import dev.juho.ffmpegrender.server.message.Message;
 import dev.juho.ffmpegrender.server.message.MessageType;
 import dev.juho.ffmpegrender.server.stats.RenderHistory;
@@ -112,6 +114,10 @@ public class RenderQueue implements Listener {
 
 					case UPDATE_RENDER_PROGRESS:
 						RenderHistory.getInstance().updateProgress(msg.getSender(), msg.getData().getDouble("progress"));
+						break;
+
+					case SET_CLIENT_TYPE:
+						setClientType(msg.getSender(), ServerClientType.valueOf(msg.getData().getString("client_type")));
 						break;
 				}
 				break;
@@ -358,6 +364,11 @@ public class RenderQueue implements Listener {
 			renderOptions = line;
 			break;
 		}
+	}
+
+	private void setClientType(UUID sender, ServerClientType type) {
+		ServerClient serverClient = (ServerClient) clientPool.get(sender);
+		serverClient.setClientType(type);
 	}
 
 }
