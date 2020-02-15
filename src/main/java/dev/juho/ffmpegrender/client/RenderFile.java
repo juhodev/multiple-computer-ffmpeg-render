@@ -66,17 +66,13 @@ public class RenderFile {
 		this.timeRendered = -1;
 	}
 
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
-
 	private void getFileDuration() throws IOException {
 		if (originalFile == null) {
 			Logger.getInstance().log(Logger.ERROR, "File not set! Couldn't get file duration");
 			return;
 		}
 
-		String[] command = Utils.buildCommand("ffmpeg -i", originalFile.getAbsolutePath());
+		String[] command = Utils.buildCommand("ffmpeg -i", "\"" + originalFile.getAbsolutePath() + "\"");
 
 		ProcessBuilder builder = new ProcessBuilder(command);
 
