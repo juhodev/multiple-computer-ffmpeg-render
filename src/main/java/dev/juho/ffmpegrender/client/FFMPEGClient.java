@@ -158,9 +158,11 @@ public class FFMPEGClient implements Client, Listener {
 	}
 
 	private void concatVideos(JSONObject filesObject) {
-		File[] files = findFiles(filesObject.getJSONArray("files"));
+		JSONArray renamedFiles = renameFiles(filesObject.getJSONArray("files"));
+		File[] files = findFiles(filesObject.getJSONArray("files"), renamedFiles);
 
 		for (File f : files) {
+			Logger.getInstance().log(Logger.DEBUG, "Adding file " + f.getAbsolutePath() + " to ffmpeg");
 			ffmpeg.addVideo(f);
 		}
 
@@ -211,7 +213,7 @@ public class FFMPEGClient implements Client, Listener {
 		}
 	}
 
-	private File[] findFiles(JSONArray fileArray) {
+	private File[] findFiles(JSONArray fileArray, JSONArray renameFiles) {
 		File[] files = new File[fileArray.length()];
 		boolean localClient = ArgsParser.getInstance().has(ArgsParser.Argument.LOCAL);
 
@@ -226,6 +228,8 @@ public class FFMPEGClient implements Client, Listener {
 				Logger.getInstance().log(Logger.DEBUG, "Found the file! " + file.getAbsolutePath());
 				files[i] = file;
 			} else {
+				String fileNewName = renameFiles.getString(i);
+
 				String saveFolder = "files";
 				if (ArgsParser.getInstance().has(ArgsParser.Argument.SAVE_FOLDER))
 					saveFolder = ArgsParser.getInstance().getString(ArgsParser.Argument.SAVE_FOLDER);
@@ -237,11 +241,31 @@ public class FFMPEGClient implements Client, Listener {
 				}
 
 				Logger.getInstance().log(Logger.DEBUG, "Found the file! " + file.getAbsolutePath());
-				files[i] = file;
+				File renamedFile = new File(file.getParent() + "/" + fileNewName);
+				boolean renameSuccess = file.renameTo(renamedFile);
+				if (!renameSuccess) {
+					Logger.getInstance().log(Logger.ERROR, "Couldn't rename " + file.getAbsolutePath() + " to " + renamedFile.getAbsolutePath());
+				} else {
+					Logger.getInstance().log(Logger.DEBUG, "Renamed " + file.getAbsolutePath() + " to " + renamedFile.getAbsolutePath());
+				}
+
+				files[i] = renamedFile;
 			}
 		}
 
 		return files;
+	}
+
+	private JSONArray renameFiles(JSONArray fileArray) {
+		JSONArray newArray = new JSONArray();
+
+		fileArray.forEach(file -> {
+			String videoStr = (String) file;
+
+			newArray.put(videoStr.replace(" ", "_"));
+		});
+
+		return newArray;
 	}
 
 }

@@ -60,7 +60,7 @@ public class FFMPEG {
 
 		String videoName = createVideoName();
 
-		String[] command = Utils.buildCommand("ffmpeg -f concat -safe 0 -i tempConcatFile.txt -c copy \"" + saveFolder + "/" + videoName + "\"");
+		String[] command = Utils.buildCommand("ffmpeg -f concat -safe 0 -i tempConcatFile.txt -c copy " + saveFolder + "/" + videoName);
 		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg concat command: ");
 		Logger.getInstance().log(Logger.DEBUG, command);
 
@@ -111,9 +111,9 @@ public class FFMPEG {
 		renderFile.reset();
 		renderFile.init(new File(saveFolder + "/" + video));
 
-		String finalName = " \"" + saveFolder + "/RENDER_" + video + "\"";
+		String finalName = saveFolder + "/RENDER_" + video;
 
-		String[] command = Utils.buildCommand("ffmpeg -i \"" + saveFolder + "/" + video + "\" ", renderOptions, finalName);
+		String[] command = Utils.buildCommand("ffmpeg -i " + saveFolder + "/" + video, renderOptions, finalName);
 
 		Logger.getInstance().log(Logger.DEBUG, "Running ffmpeg render command: ");
 		Logger.getInstance().log(Logger.DEBUG, command);

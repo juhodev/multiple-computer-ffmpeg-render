@@ -19,7 +19,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		Logger.LOG_LEVEL = Logger.INFO;
-		Logger.getInstance().log(Logger.INFO, "Starting ffmpegrender!");
+		Logger.getInstance().log(Logger.INFO, "Starting multiple-computer-render!");
 
 		ArgsParser.getInstance().add(ArgsParser.Argument.CLIENT, ArgsParser.Type.STRING, "-c", "-client");
 		ArgsParser.getInstance().add(ArgsParser.Argument.SERVER, ArgsParser.Type.STRING, "-s", "-server");
@@ -42,7 +42,7 @@ public class Main {
 		}
 
 		if (ArgsParser.getInstance().has(ArgsParser.Argument.HELP)) {
-			Logger.getInstance().log(Logger.INFO, "Usage: java -jar ffmpegrender.jar [options...]");
+			Logger.getInstance().log(Logger.INFO, "Usage: java -jar multiple-computer-render.jar [options...]");
 			Logger.getInstance().log(Logger.INFO, "Server options: ");
 			Logger.getInstance().log(Logger.INFO, "\t-server                    runs the program as a server");
 			Logger.getInstance().log(Logger.INFO, "\t-port <port>               port that the server will use");
