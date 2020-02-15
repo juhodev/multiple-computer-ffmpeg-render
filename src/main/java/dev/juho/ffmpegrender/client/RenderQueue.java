@@ -119,6 +119,10 @@ public class RenderQueue implements Listener {
 					case SET_CLIENT_TYPE:
 						setClientType(msg.getSender(), ServerClientType.valueOf(msg.getData().getString("client_type")));
 						break;
+
+					case GET_OBSERVER_DATA:
+						Logger.getInstance().log(Logger.DEBUG, "get obserer data");
+						break;
 				}
 				break;
 

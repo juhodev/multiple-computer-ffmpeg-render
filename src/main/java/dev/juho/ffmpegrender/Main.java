@@ -8,6 +8,7 @@ import dev.juho.ffmpegrender.events.EventBus;
 import dev.juho.ffmpegrender.client.Files;
 import dev.juho.ffmpegrender.client.RenderQueue;
 import dev.juho.ffmpegrender.server.Server;
+import dev.juho.ffmpegrender.server.observer.ObserverListener;
 import dev.juho.ffmpegrender.utils.ArgsParser;
 import dev.juho.ffmpegrender.utils.Logger;
 
@@ -77,6 +78,9 @@ public class Main {
 
 			RenderQueue renderQueue = new RenderQueue(files, server.getClientPool());
 			EventBus.getInstance().register(renderQueue);
+
+			ObserverListener observerListener = new ObserverListener(server.getClientPool());
+			EventBus.getInstance().register(observerListener);
 
 			CmdExecutor cmdExecutor = new CmdExecutor();
 			cmdExecutor.start();

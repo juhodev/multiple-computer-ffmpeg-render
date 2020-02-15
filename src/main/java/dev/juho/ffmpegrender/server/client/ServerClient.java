@@ -37,6 +37,10 @@ public class ServerClient implements Client {
 		this.clientType = clientType;
 	}
 
+	public ServerClientType getClientType() {
+		return clientType;
+	}
+
 	@Override
 	public void listen() throws IOException {
 		Logger.getInstance().log(Logger.INFO, "Listening to new client!");
