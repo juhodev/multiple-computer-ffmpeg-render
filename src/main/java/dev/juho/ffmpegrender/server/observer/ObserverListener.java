@@ -5,6 +5,7 @@ import dev.juho.ffmpegrender.events.EventType;
 import dev.juho.ffmpegrender.events.Listener;
 import dev.juho.ffmpegrender.events.events.MessageEvent;
 import dev.juho.ffmpegrender.server.ClientPool;
+import dev.juho.ffmpegrender.server.Server;
 import dev.juho.ffmpegrender.server.client.Client;
 import dev.juho.ffmpegrender.server.client.ServerClient;
 import dev.juho.ffmpegrender.server.message.Message;
@@ -26,11 +27,9 @@ public class ObserverListener implements Listener {
 
 	@Override
 	public void handle(Event<EventType, ?> e) {
-		Logger.getInstance().log(Logger.DEBUG, "observer data");
 		if (e.getType() == EventType.MESSAGE) {
 			Message msg = ((MessageEvent) e).getData();
 			Client senderClient = clientPool.get(msg.getSender());
-			Logger.getInstance().log(Logger.DEBUG, "observer data");
 
 			switch (msg.getType()) {
 				case GET_OBSERVER_DATA:
@@ -38,8 +37,7 @@ public class ObserverListener implements Listener {
 					JSONObject dataObj = new JSONObject();
 					dataObj.put("clients", getConnectedClients());
 					dataObj.put("progress", getProgressObject());
-					senderClient.getWriter().write(Message.build(MessageType.OBSERVER_DATA, msg.getSender(), dataObj));
-					e.cancel();
+					senderClient.getWriter().write(Message.build(MessageType.OBSERVER_DATA, Server.serverUUID, dataObj));
 					break;
 			}
 		}
